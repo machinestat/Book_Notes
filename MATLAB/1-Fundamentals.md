@@ -6,3 +6,5 @@ MATLAB variable names consist of a letter, followed by any number of letters, di
 
 Reserved names for the constants.
 * eps --- error tolerance for flating-point operation
+* i and j
+* Inf --- the MATLAB representation of infinity quantity $+\infty$
