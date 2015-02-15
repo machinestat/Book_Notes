@@ -1,1 +1,1 @@
-I will reproduce book examples and questions here to expend and imrove my knowledge and skills.
+I record some notes and problems here for practising and reference.
