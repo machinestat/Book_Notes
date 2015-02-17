@@ -1,0 +1,27 @@
+---
+title: "Data Pre-processing"
+output: pdf_document
+---
+
+Data pre-processing techniques generally refer to the addition, deletion, or transformation of training set data, and data preparation can make or break a model's predictive ability.
+
+## 1.1 Cell Segmentation in High-content Screening
+```{r}
+library(AppliedPredictiveModeling)
+data(segmentationOriginal)
+## Retain the original training set
+segTrain <- subset(segmentationOriginal, Case == "Train")
+
+## Remove the first three columns (identifier columns)
+segTrainX <- segTrain[, -(1:3)]
+segTrainClass <- segTrain$Class
+```
+
+## 1.2 Data Transformations for Individual Predictors
+**_Centering and Scaling_**
+To center a predictor variable, the average predictor value is subtracted from all values, and the predictor has a zero mean after this. To scale the data, each value of the predictor variable is divided by its standard deviation, and this will coerce the values to have a common standard deviation of one. Some models, such as PLS, benefit from the predictors being on a common scale. The only real downside to these transformations is a loss of interpretability of the individual values since the data are no longer in the original units.
+
+**_Transformations to Resolve Skewness_**
+An un-skewed distribution is one that is roughly symmetric. This means that the probability of falling on either side of the distribution's mean is roughly equal. A right skewed distribution has a larger number of points on the left side of the distribution (smaller values) than on the right side (larger values). A general rule of thumb to consider is that skewed data whose ratio of the highest value to the lowest value is greater than 20 have significant skewness. The skewness statistic value will be close to zero if the distribution of the predictor variable is roughly symmetric. The skewness statistic becomes larger as the distribution becomes more right skewed. Similarly, as the distribution becomes more left skewed, the value becomes negative. The formula for the sample skewness statistic is
+
+$skewness = \frac{\sum \left ( x_{i}-\bar{x} \right )}{\left ( n-1 \right )v^{\frac{3}{2}}}$
