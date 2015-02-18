@@ -36,9 +36,41 @@ max(segTrainX$VarIntenCh3)/min(segTrainX$VarIntenCh3)
 library(e1071)
 skewness(segTrainX$VarIntenCh3)
 par(mfrow = c(1,2))
+par(mar = c(2, 2, 4, 2) + 0.1)
 hist(segTrainX$VarIntenCh3, ylab = "Count", xlab = "Natural Units",
      xlim = c(0, 800), ylim = c(0, 400), main = "")
+box()
 ## Histogram after log transformation
 hist(log(segTrainX$VarIntenCh3), ylab  ="", xlab = "Log Units",
      xlim = c(0, 8), ylim = c(0, 250), main = "")
+box()
+```
+Alternatively, statistical methods can be used to empirically identify an
+appropriate transformation. Box and Cox (1964) propose a family of transformations3 that are indexed by a parameter, denoted as:  
+$x^{*}=\left\{\begin{matrix}
+\frac{x^{\lambda }-1}{\lambda }  \\ log(x)  
+\end{matrix}\right.$
+
+```{r}
+## Use caret's preProcess function to transform for skewness
+library(caret)
+segPP <- preProcess(segTrainX, method = "BoxCox")
+
+## Apply the transformations
+segTrainTrans <- predict(segPP, segTrainX)
+
+## Results for a single predictor
+segPP$bc$VarIntenCh3
+
+## Another predictor,the estimated cell perimeter,had an estimate of −1.1.
+segPP$bc$PerimCh1
+
+histogram(~segTrainX$PerimCh1,
+          xlab = "Natural Units",
+          type = "count")
+
+histogram(~segTrainTrans$PerimCh1,
+          xlab = "Transformed Data",
+          ylab = " ",
+          type = "count")
 ```
