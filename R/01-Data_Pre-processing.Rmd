@@ -24,4 +24,21 @@ To center a predictor variable, the average predictor value is subtracted from a
 **_Transformations to Resolve Skewness_**
 An un-skewed distribution is one that is roughly symmetric. This means that the probability of falling on either side of the distribution's mean is roughly equal. A right skewed distribution has a larger number of points on the left side of the distribution (smaller values) than on the right side (larger values). A general rule of thumb to consider is that skewed data whose ratio of the highest value to the lowest value is greater than 20 have significant skewness. The skewness statistic value will be close to zero if the distribution of the predictor variable is roughly symmetric. The skewness statistic becomes larger as the distribution becomes more right skewed. Similarly, as the distribution becomes more left skewed, the value becomes negative. The formula for the sample skewness statistic is
 
-$skewness = \frac{\sum \left ( x_{i}-\bar{x} \right )}{\left ( n-1 \right )v^{\frac{3}{2}}}$
+$skewness = \frac{\sum \left ( x_{i}-\bar{x} \right )}{\left ( n-1 \right )v^{\frac{3}{2}}}$    
+where $v = \frac{\sum \left ( x_{i}- \bar{x}\right )}{\left ( n-1 \right )}$
+
+Replacing the data with the log, square root, or inverse may help to remove the skew.
+
+**Example** The column VarIntenCh3 measures the standard deviation of the intensity of the pixels in the actin filaments
+```{r}
+max(segTrainX$VarIntenCh3)/min(segTrainX$VarIntenCh3)
+
+library(e1071)
+skewness(segTrainX$VarIntenCh3)
+par(mfrow = c(1,2))
+hist(segTrainX$VarIntenCh3, ylab = "Count", xlab = "Natural Units",
+     xlim = c(0, 800), ylim = c(0, 400), main = "")
+## Histogram after log transformation
+hist(log(segTrainX$VarIntenCh3), ylab  ="", xlab = "Log Units",
+     xlim = c(0, 8), ylim = c(0, 250), main = "")
+```
