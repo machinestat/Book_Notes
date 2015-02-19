@@ -21,6 +21,43 @@ The basic data structure in R is the vector. There are two kinds of vectors: ato
 * Length, length(), how many elements it contains.
 * Attributes, attributes(), additional arbitrary metadata.
 
+They differ in the types of their elements: all elements of an atomic vector must be the same type, whereas the elements of a list can have different types. Use `is.vector() || is.list()` to test if an object actually a vector.
+
+## 1.1.1 Atomic Vector
+There are four common types of atomic vectors: logical, integer, double(often called numeric), and character.
+
+Create atomic vectors with `c()`:
+```{r}
+dbl_var <- c(1, 2.5, 4.5)
+int_var <- c(1L, 6L, 10L)# get an integer vector with L suffix
+log_var <- c(TRUE, FALSE, T, F) # use TRUE, FALSE(or T, F) to create logical vector
+chr_var <- c("these are", "some strings")
+
+##Atomic vectors are always flat
+c(1, c(2, c(3, 4)))
+```
+
+### 1.1.1.1 Types and tests
+We can determine a vector's type with `typeof()`, or check if it is a specific type with an "is" function: `is.character()`, `is.double()`, `is.integer()`, `is.logical()`, or `is.atomic()`.
+
+```{r}
+typeof(int_var)
+is.integer(int_var)
+is.atomic(int_var)
+
+typeof(dbl_var)
+is.double(dbl_var)
+is.atomic(dbl_var)
+```
+
+`is.numeric` is a general test and return *TRUE* for both integer and double vectors.
+
+### 1.1.1.2 Coercion
+If we combine two types of vectors they will be *coerced* to the most flexible type. Types from least to most flexible are: logical, integer, double and character.
+
+
+
+
 
 
 
