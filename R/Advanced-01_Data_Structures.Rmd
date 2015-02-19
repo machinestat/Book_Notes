@@ -1,0 +1,26 @@
+---
+title: "Data Structures"
+output: pdf_document
+---
+
+## Introduction
+
+R's base data structures can be organized by their dimensionality (1d, 2d, or nd) and whether they're homogeneous (all contents must be of the same type) or heterogeneous (the contents can be of different types). This gives rise the five data types most often used in data analysis:
+
+|    | Homogeneous     |  Heterogeneous  |
+|----|:---------------:|----------------:|
+| 1d | Atomic vector   | List            |
+| 2d | Matrix          | Data frame      |
+| nd | Array
+
+Almost all other objects are built upon these foundations. Note that R has no 0-dimentional, or scalar types. Individual numbers or strings are actually vectors of length one. Given an object, the best way to understand what data structures it's composed of is to use `str()`.
+
+## 1.1 vectors
+The basic data structure in R is the vector. There are two kinds of vectors: atomic vectors and lists. They have three common properties:   
+* Type, typeof(), what it is.
+* Length, length(), how many elements it contains.
+* Attributes, attributes(), additional arbitrary metadata.
+
+
+
+
