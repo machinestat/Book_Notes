@@ -137,6 +137,12 @@ The following algebraic operations can be defined:
 
 (v) **Matrix right division** The statement $B/A ={\left ( {A}'\setminus {B}' \right )}'$. can be used to solve the linear equations **_XA = B_**.
 
+(vi) **Matrix flip and rotation** The left-right flip and up-down flip of a given matrix **_A_** can be obtained with `B=fliplr(A)` and `C=flipup(A)` respectively. The command `D = rot90(A)` rotates matrix **A** counterclockwise by $90^{0}$.
+
+(vii) **Matrix power** $A^{x}$ computes the matrix **A** to the power x when matrix **A** is square. In MATLAB, the power can be evaluated with `F = A^x`.
+
+(viii) **Dot operation** The statement `C = A.*B` can be used to obtain element-by-element product of matrices *A* and *B*, such that $c_{ij} = a_{ij}b_{ij}. The dot product is also referred to as the _Hadamard product_.
+
 
 
 
