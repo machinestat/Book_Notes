@@ -41,9 +41,55 @@ Now we can verify the *cbuser* account.
 % mysql -h localhost -u cbuser -p
 Enter password: cbpass
 ```
- 
+If you want to see a list of users, use the following command:
+```
+mysql> select Host, User, Password from mysql.user;
++------------+------------------+-------------------------------------------+
+| Host       | User             | Password                                  |
++------------+------------------+-------------------------------------------+
+| localhost  | root             | *B6E7D9CB4385CA81E24FF70D5705954B78AD583B |
+| shu-laptop | root             | *B6E7D9CB4385CA81E24FF70D5705954B78AD583B |
+| 127.0.0.1  | root             | *B6E7D9CB4385CA81E24FF70D5705954B78AD583B |
+| ::1        | root             | *B6E7D9CB4385CA81E24FF70D5705954B78AD583B |
+| localhost  | debian-sys-maint | *344B39E0BEF5F6AD5B7B842711A7D6A730FFC508 |
+| localhost  | cbuser           | *126CFB940B0843713B19A6C21B99C0F1F9F3AFB6 |
++------------+------------------+-------------------------------------------+
+6 rows in set (0.00 sec)
+```
+And the protocol used for the connection from 127.0.0.1 is different from a connection from ::1.
+
 ## 1.2 Creating a Database and Tables
-Now we want to create a database and set up tables within it.
+Now we want to create a database and set up tables within it, and we can use *CREATE DATABASE* statement to create a database after connecting the server using *mysql* client
+```
+mysql> CREATE DATABASE cookbook;
+Query OK, 1 row affected (0.04 sec)
+```
+But even after creating the database we still do not have a default database:
+```
+mysql> SELECT DATABASE();
++------------+
+| DATABASE() |
++------------+
+| NULL       |
++------------+
+```
+So we need to select a default database;
+```
+mysql> USE cookbook;
+Database changed
+mysql> SELECT DATABASE();
++------------+
+| DATABASE() |
++------------+
+| cookbook   |
++------------+
+```
+We can also use the following command enables the user *cbuser* to connect to the *cookbook* database on the local host from command prompt.
+```
+>> mysql -p -u cbuser cookbook;
+``
+
+
 
 
 
