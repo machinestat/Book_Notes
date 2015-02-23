@@ -59,13 +59,39 @@ mysql> select Host, User, Password from mysql.user;
 And the protocol used for the connection from 127.0.0.1 is different from a connection from ::1.
 
 ## 1.2 Creating a Database and Tables
+MySQL provides several database-level statements: *USE* for selecting a default database, *CREATE DATABASE* for creating databases, *DROP DATABASE* for removing them, and *ALTER DATABASE* for modifying global characteristics. The keyword *SCHEMA* is a synonym for *DATABASE* in any statement where the latter occurs.
+
+### Creating Databases
 Now we want to create a database and set up tables within it, and we can use *CREATE DATABASE* statement to create a database after connecting the server using *mysql* client
 ```
 mysql> CREATE DATABASE cookbook;
 Query OK, 1 row affected (0.04 sec)
 ```
+By default, an error occurs if you try to create a database that already exists. To suppress this error and create a database only if it does not exist, add an *IF NOT EXISTS* clause:
+```
+CREATE DATABASE IF NOT EXISTS cookbook;
+```
+And we can set server character set and collation explicityly using the *CHARACTER SET* and *COLLATE* clauses:
+```
+CREATE DATABASE IF NOT EXISTS cookbook CHARACTER SET utf8 COLLATE utf8_icelandic_ci
+```
+We can use *SHOW CREATE DATABASE* statement to see the definition for an existing database.
+```
+mysql> SHOW CREATE DATABASE cookbook\G
+*************************** 1. row ***************************
+       Database: cookbook
+Create Database: CREATE DATABASE `cookbook` /*!40100 DEFAULT CHARACTER SET utf8
+*/
+1 row in set (0.06 sec)
+```
 But even after creating the database we still do not have a default database:
 ```
+### Dropping Databases
+Use *DROP DATABASE* statement to drop a database, and it removes the database and all its contents.
+```
+DROP DATABASE cookbook;
+```
+
 mysql> SELECT DATABASE();
 +------------+
 | DATABASE() |
