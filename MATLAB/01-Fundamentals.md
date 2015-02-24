@@ -150,14 +150,42 @@ Assume that the matrices *A* and *B* are both $n \times m$ matrices, the followi
 
 (ii) **"Or" operation** In MATLAB, the operator | is used to define element-by-element operation: *A | B*.
 
-(iii) **"Not" operation In MATLAB, the operator ~ can be used to define the "not" operation such that *B = ~A*.
+(iii) **"Not"** operation In MATLAB, the operator ~ can be used to define the "not" operation such that *B = ~A*.
 
 (iv) **Exclusive or** The exclusive or operation of two matrices *A* and *B* can be evaluated from *xor(A, B)*.
 
 ## 2.3 Relationship operations of matrices
+*C = A > B* performs element-by-element comparison, with the element $c_{ij} = 1$ for $a_{ij} > b_{ij}, and c_{ij} = 0$ otherwise. The equality relationship can be tested with == operator, while the other operators >=, ~= can also be used. *find()* and *all()* can also be used to perform relationship operations. 
 
+```
+>> A = [1,2,3; 4,5,6; 7,8,0];%enter a matrix
+>> i = find(A >= 5) %find all the indices in A whose value if larger than 5
+i =
+     3
+     5
+     6
+     8
+```
+The function arranges first the original matrix *A* in a single column, on a columnwise basis. The indices can then be returned.
 
+The functions *all()* and *any()* can also be used to check the values in the given matrices.
+```
+>> a1 = all(A >= 5) %check each column whether all larger than 5
+a1 =
+     0     0     0
+>> a2 = any(A >= 5) %check each column whether any larger than 5
+a2 =
+     1     1     1
+```
 
+## 2.4 Simplifications and presentations of anlaytical results
+The Symbolic Math Toolbox can be used to derive mathematical formulas. The results however are often not presented in their simplest form. The results should then be simplified. The easiest way of simplicifcation is by the use of *simple()* function, where different simplification methods are tested automatically until the simplest result can be obtained, with the syntaxes 
+```
+s1 = simple(s), % try various simplification methods and find the simplest  
+[s1, how] = simple(s), % return the simplest form and the method used
+```
+
+where *s* is the original expression, and *s1* is the simplified result. The string argument *how* will return the method of simplification. Apart from the easy-to-use *simple()* function, the function *collect()* can be used to collect the coeffiecients, and function *expand()* can be used to expand a polynomial. The function *factor()* can be used to perform factorization of a polynomial. The function *numden()* can be used to extract the numerator and enominator from a given expression.
 
 
 
