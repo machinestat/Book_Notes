@@ -143,6 +143,21 @@ The following algebraic operations can be defined:
 
 (viii) **Dot operation** The statement `C = A.*B` can be used to obtain element-by-element product of matrices *A* and *B*, such that $c_{ij} = a_{ij}b_{ij}. The dot product is also referred to as the _Hadamard product_.
 
+## 2.2 Logic operations of matrices
+Assume that the matrices *A* and *B* are both $n \times m$ matrices, the following operations are defined:
+
+(i) **"And" operation** In MATLAB, the operator & is used to define element-by-element "and" operation. The statement *A & B* can then be defined.
+
+(ii) **"Or" operation** In MATLAB, the operator | is used to define element-by-element operation: *A | B*.
+
+(iii) **"Not" operation In MATLAB, the operator ~ can be used to define the "not" operation such that *B = ~A*.
+
+(iv) **Exclusive or** The exclusive or operation of two matrices *A* and *B* can be evaluated from *xor(A, B)*.
+
+## 2.3 Relationship operations of matrices
+
+
+
 
 
 
