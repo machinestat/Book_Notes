@@ -42,6 +42,15 @@ $Var\left [ \bar{Y_{1.}} - \bar{Y_{2.}} \right ] = 2\sigma^{2}/r \cdots \cdots (
 Note that the difference between two means does _not_ involve $\sigma^{2}$ so they are estimated free of block variation.
 
 ## 2.2.2 The Traditional Method: Analysis of Variance
+Analyss of variance (ANOVA) is a key component in analysis of data from a randomized block design. The table below is a standard ANOVA table for the RCBD.
 
+ANOVA Table for Randomized Complete Blocks Design
 
+|*Source of Variation*| *df*     | *MS*    |  *E[MS]*                    |
+|---------------------|:--------:|---------|:---------------------------:|
+|Blocks               |r - 1     |MS(Blks) | $\sigma^{2}+t\sigma^{2}_{b}$|
+|Treatments           |t - 1     |MS(Trts) | $\sigma^{2}+r\o^{2}$        |
+|Error	              |(r-1)(t-1)|MS(Error)| $\sigma^{2}$                |
 
+## 2.2.3 Using Expeceted Mean Squares
+*Expected mean squares* are the expectations of mean squares, and they are the quantities that are estimated by mean squares in an analysis of variance. The expected mean squares can be used to motivate test statistics, to compute standard errors for means and comparisons of means, and to provide a way to estimate the variance components. The basic idea is to examine the expected mean square for a factor and see how it differs under null and alternative hypothesis. For example, the expected mean square for treatments, $E[MS(Trts)] = \sigma^{2} + r\o^{2}$, can be used to determine how to set up a test statistic for treatment differences.
