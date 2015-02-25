@@ -1,0 +1,82 @@
+---
+title: "Introduction"
+date: "Wednesday, February 25, 2015"
+output: pdf_document
+---
+
+The purpose of time series analysis is generally twofolds: to understand or model the stochastic mechanism that gives rise to an observed series and to predict or forecast the future values of a series based on the history of that series and, possibly, other related series or factors. A unique feature of time series and their models is that we usually cannot assume that the observations arise independently from a common population. Studying models that incorporate dependence is the key concept in time series analysis.
+
+## 1.1 Examples of Time Series
+
+*Annual Rainfall in Los Angeles*
+The first plot displays a time series plot of the annual rainfall amounts recorded in Los Angeles, California, over more than 100 years. The plot shows considerable variation in rainfall amount over the years—some years are low, some high, and many are in-between in value. For analysis and modeling purposes we are interested in whether or not consecutive years are related in some way. If so, we might be able to use one year’s rainfall value to help forecast next year’s rainfall amount. One graphical way to investigate that question is to pair up consecutive rainfall values and plot the resulting scatterplot of pairs, and the second plot shows such a scatterplot for rainfall. From these two plots we can see that there is little if any information about this year’s rainfall amount from last year’s amount. The plot shows no “trends” and no general tendencies. There is little correlation between last year’s rainfall amount and this year’s amount.
+```{r}
+library(TSA)
+# Time Series Plot of Los Angeles Annual Rainfall
+data(larain)
+plot(larain, ylab = 'Inches', xlab = 'Year', type = 'o')
+# Scatterplot of LA Rainfall versus Last Year’s LA Rainfall
+plot(y = larain, x = zlag(larain), ylab = "Inches",
+     xlab = "Previous Year Inches")
+```
+
+**An Industrial Chemical Process**
+This is a time series from an industrial chemical process. The variable measured here is a color property from consecutive batches in the process. The first plot shows a time series plot of these color values. Here values that are neighbors in time tend to be similar in size. It seems that neighbors are related to one another. This can be seen better by constructing the scatterplot of neighboring pairs as the example above. The scecond plot displays the scatterplot of the neighboring pairs of color values. We see a slight upward trend in this plot -- low values tend to be followed in the next batch by low values, middle-sized values tend to be followed by middle-sized values, and high values tend to be followed by high values. The trend is apparent but is not terribly strong. For example, the correlation in this scatterplot is about 0.6.
+```{r}
+data(color)
+# Time Series Plot of Color Property from a Chemical Process
+plot(color, ylab = 'Color Property', xlab = "batch", 
+     type = 'o')
+
+# Scatterplot of Color Value versus Previous Color Value
+plot(y = color, x=zlag(color), ylab = 'Color Property',
+     xlab = "Previous Batch Color Property")
+```
+
+**Annual Abundance of Canadian Hare**
+Here the first plot gives the time series plot of this abundance over about 30 years. Neighboring values here are very closely related. Large changes in abundance do not occur from one year to the next. The second plot is abundance versus the previous year’s abundance. As in the previous example, we see an upward trend in the plot—low values tend to be followed by low values in the next year, middle-sized values by middle-sized values, and high values by high values.
+```{r}
+# Abundance of Canadian Hare
+data(hare)
+plot(hare,ylab='Abundance',xlab='Year',type='o')
+# Hare Abundance versus Previous Year’s Hare Abundance
+plot(y=hare,x=zlag(hare),ylab='Abundance',
+     xlab='Previous Year Abundance')
+```
+
+**Monthly Average Temperatures in Dubuque, Iowa**
+The average monthly temperatures (in degrees Fahrenheit) over a number of years recorded in Dubuque, Iowa, are shown in the plot below. This time series displays a very regular pattern called *seasonality*. Seasonality for monthly values occurs when observations twelve months apart are related in some manner or another. All Januarys and Februarys are quite cold but they are similar in value and different from the temperatures of the warmer months of June, July, and August, for example. There is still variation among the January values and variation among the June values. Models for such series must accommodate this variation while preserving the similarities.
+```{r}
+# Average Monthly Temperatures, Dubuque, Iowa
+data(tempdub)
+plot(tempdub,ylab='Temperature',type='o')
+```
+
+**Monthly Oil Filter Sales**
+This example concerns the monthly sales to dealers of a specialty oil
+filter for construction equipment manufactured by John Deere. When these data were first presented to one of the authors, the manager said, “There is no reason to believe that these sales are seasonal.” Seasonality would be present if January values tended to be related to other January values, February values tended to be related to other February values, and so forth. The first time series plot shown is not designed to display seasonality especially well. The second plot gives the same plot but amended to use
+meaningful plotting symbols. In this plot, all January values are plotted with the character J, all Februarys with F, all Marches with M, and so forth. With these plotting symbols, it is much easier to see that sales for the winter months of January and February all tend to be high, while sales in September, October, November, and December are generally quite low. The seasonality in the data is much easier to see from this modified time
+series plot.
+```{r}
+# Monthly Oil Filter Sales
+data(oilfilters)
+plot(oilfilters,type='o',ylab='Sales')
+
+# Monthly Oil Filter Sales with Special Plotting Symbols J=January (and June and July), F=February, M=March (and May), and so forth
+plot(oilfilters,type='l',ylab='Sales')
+points(y=oilfilters,x=time(oilfilters),
+       pch=as.vector(season(oilfilters)))
+```
+
+## 1.2 A Model-Building Strategy
+There are three main steps in the process for finding appropriate models, each of which may be used several times:
+
+    1. *model specification* (or identification)
+    2. *model fitting*
+    3. *model diagnostics*
+    
+In model specification (or identification), the classes of time series models are selected that may be appropriate for a given observed series. In this step we look at the time plot of the series, compute many different statistics from the data, and also apply any knowledge of the subject matter in which the data arise. It should be emphasized that the model chosen at this point is _tentative_ and subject to revision later on in the analysis.
+
+Model fitting consists of finding the best possible estimates of those unknown parameters within a given model.
+
+Model diagnostics is concerned with assessing the quality of the model that we have specified and estimated. How well does the model fit the data? Are the assumptions of the model reasonably well satisfied? If no inadequacies are found, the modeling may be assumed to be complete, and the model may be used
