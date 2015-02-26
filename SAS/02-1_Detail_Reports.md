@@ -104,7 +104,7 @@ PROC REPORT DATA = housing NOWINDOWS
 	TITLE2 'Price Range $200,000 to $350,000';
 	TITLE3 'Listed by Zone';
 
-	*Include today’s date in the footnote text.*;
+	*Include today?s date in the footnote text.*;
 	FOOTNOTE "Listing Produced on %sysfunc(today(),worddate12.)";
 
 	*Select the observations*;
@@ -264,3 +264,192 @@ run;
 *Reset options to their default settings.;
 OPTIONS BYLINE CENTER MISSING = '.';
 ```
+
+```
+*---------------------------------------------------------------------*
+|Example 2.4 Summarizing the Rows of a Report                         |
+|Goal: List observations in a data set and summarize selected numeric |
+|variables by groups. Present an overall summarization of the         |
+|selected numeric variables at the end of the report.                 |
+*---------------------------------------------------------------------*;
+
+*Create formats for TYPE and SERVICE.;
+PROC FORMAT;
+		VALUE 	$type	   'res' = 'Residential'
+						   'com' = 'Commercial';
+		VALUE   $service   'gen' = 'General Service'
+		                   'wtr' = 'Water Heating'
+						   'op'  = 'Off Peak'
+						   'spc' = 'Space Heating'
+						   'fld' = 'Flood Lights'
+						  'area' = 'Area Lights'
+						   'oth' = 'Other Service';
+RUN;
+
+TITLE 'Regional Energy';
+TITLE2 'Quarterly Use by Residential and Commercial Customers';
+
+PROC REPORT DATA = reports.poweruse NOWINDOWS;
+	*List the columns and place a column heading above a group of variables;
+	COLUMN type service ('-First Quarter-' jan feb mar)
+						('-Second Quarter-' apr may jun);
+	DEFINE type / ORDER FORMAT = $type. WIDTH = 11 ' ';
+	DEFINE service / ORDER FORMAT = $service. WIDTH = 15 'Service';
+
+	*Calculate the SUM statistic for each of the analysis variables;
+	DEFINE jan / ANALYSIS SUM 'Janaury' WIDTH = 8 FORMAT = COMMA6.;
+	DEFINE feb / ANALYSIS SUM 'February' WIDTH = 8 FORMAT = COMMA6.;
+	DEFINE mar / ANALYSIS SUM 'March' WIDTH = 8 FORMAT = COMMA6.;
+	DEFINE apr / ANALYSIS SUM 'April' WIDTH = 8 FORMAT = COMMA6.;
+	DEFINE may / ANALYSIS SUM 'May' WIDTH = 8 FORMAT = COMMA6.;
+	DEFINE jun / ANALYSIS SUM 'June' WIDTH = 8 FORMAT = COMMA6.;
+
+	*Write a summary line after the last row for each value of TYPE;
+	*When sending output to the LISTING destination. place a double overline;
+	*and a double underline above and below the summary row, and skip a line;
+	*after the double underline.;
+	BREAK AFTER type / SUMMARIZE DOL DUL SKIP;
+
+	*Write a summary line at the end of the report. Sum the ;
+	*analysis variables over all observations.;
+	RBREAK AFTER / SUMMARIZE DOL DUL SKIP;
+RUN;
+
+
+OUTPUT:
+
+                                         Regional Energy     
+                      Quarterly Use by Residential and Commercial Customers
+
+                                   --------First Quarter--------  --------Second Quarter--------
+                  Service           Janaury  February     March     April       May      June
+     Commercial   Area Lights         6,526    11,999    17,533    10,221    17,218     8,857
+                  Flood Lights       10,911    12,648    15,502     9,120     8,624    18,338
+                  General Service     1,203       641       728     1,039     1,156       782
+                  Off Peak           15,062    15,635     9,509    11,717    11,456    12,461
+                  Other Service       1,390     1,672     1,638     1,282     1,654     1,915
+                  Space Heating         111        85       121       109       125       103
+                  Water Heating         160       168       130       187       101       101
+     ===========                   ========  ========  ========  ========  ========  ========
+     Commercial                      35,363    42,848    45,161    33,675    40,334    42,557
+     ===========                   ========  ========  ========  ========  ========  ========
+
+     Residential  Area Lights           118       116        91        92        95       137
+                  Flood Lights           96        89        75        87        75        82
+                  General Service    22,281    21,505    22,556    22,784    25,977    25,371
+                  Off Peak            1,152     1,362       698     1,047       534     1,492
+                  Other Service         286       238       109        33       158       465
+                  Space Heating       8,280    10,984    10,111    13,234    13,723    11,072
+                  Water Heating       9,589    10,625    14,160    18,130     8,592     7,654
+     ===========                   ========  ========  ========  ========  ========  ========
+     Residential                     41,802    44,919    47,800    55,407    49,154    46,273
+     ===========                   ========  ========  ========  ========  ========  ========
+
+                                   ========  ========  ========  ========  ========  ========
+                                     77,165    87,767    92,961    89,082    89,488    88,830
+                                   ========  ========  ========  ========  ========  ========
+```
+Using PROC PRINT to produce similar report:
+```
+*First we need to sort the data;
+PROC SORT DATA = reports.poweruse OUT = poweruse;
+    BY type service;
+RUN;
+
+TITLE "Regional Energy";
+TITLE2 "Quarterly Use by Residential and Commercial Customers";
+
+*Use variable labels as column headings.;
+PROC PRINT DATA = poweruse LABEL;
+	ID type;
+	BY type;
+	VAR service jan feb mar apr may jun;
+
+	*Sum the values of the numeric variables for each BY group and overall.;
+	SUM jan feb mar apr may jun;
+
+	*Add labels and formats;
+	LABEL type = '00'x
+		  service = 'Service'
+		  jan = 'January'
+		  feb = 'February'
+		  mar = 'March'
+		  apr = 'April'
+		  may = 'May'
+		  jun = 'June';
+	FORMAT type $type. service $service. jan--jun comma6.;
+RUN;
+```
+Use PROC REPORT to ummarize over all observations and summarize observations within groups. Summarize specific variables within an observation and add these summaries as columns in the report. 
+
+```
+OPTIONS LS = 120 PS = 45;
+
+TITLE "Regional Energy";
+TITLE2 "Quarterly Use by Residential and Commercial Customers";
+
+PROC REPORT DATA = poweruse NOWINDOWS SPLIT = '/';
+    COLUMN type service ('-First Quarter-' jan feb mar quarter1)
+						('-Second Quarter-' apr may jun quarter2)
+						total;
+	DEFINE type / ORDER FORMAT = $type. WIDTH = 11 ' ';
+	DEFINE service / ORDER FORMAT = $service. WIDTH = 15 'Service';
+	DEFINE jan / ANALYSIS SUM 'January' WIDTH = 8 FORMAT = comma8.;
+	DEFINE feb / ANALYSIS SUM 'February' WIDTH = 8 FORMAT = comma8.;
+	DEFINE mar / ANALYSIS SUM 'March' WIDTH = 8 FORMAT = comma8.;
+	DEFINE apr / ANALYSIS SUM 'April' WIDTH = 8 FORMAT = comma8.;
+	DEFINE may / ANALYSIS SUM 'May' WIDTH = 8 FORMAT = comma8.;
+	DEFINE jun / ANALYSIS SUM 'June' WIDTH = 8 FORMAT = comma8.;
+
+	*Identify the computed columns;
+	DEFINE quarter1 / COMPUTED 'Quarter/Total' WIDTH = 8 FORMAT = comma8.;
+	DEFINE quarter2 / COMPUTED 'Quarter/Total' WIDTH = 8 FORMAT = comma8.;
+	DEFINE total / COMPUTED 'Total' WIDTH = 8 FORMAT = comma8.;
+
+	*Calculate the values of each computed variable.;
+	COMPUTE quarter1;
+		quarter1 = sum(jan.sum, feb.sum, mar.sum);
+	ENDCOMP;
+
+	COMPUTE quarter2;
+		quarter2 = sum(apr.sum, may.sum, jun.sum);
+	ENDCOMP;
+
+	COMPUTE total;
+		total = sum(quarter1, quarter2);
+	ENDCOMP;
+
+	BREAK AFTER type / SUMMARIZE DOL DUL SKIP;
+RUN;
+
+And the output is:
+
+                                                    Regional Energy
+                                 Quarterly Use by Residential and Commercial Customers
+
+                               ------------First Quarter------------  ------------Second Quarter------------
+                                                              Quarter                                 Quarter
+              Service           January  February     March     Total     April       May      June     Total     Total
+ Commercial   Area Lights         6,526    11,999    17,533    36,058    10,221    17,218     8,857    36,296    72,354
+              Flood Lights       10,911    12,648    15,502    39,061     9,120     8,624    18,338    36,082    75,143
+              General Service     1,203       641       728     2,572     1,039     1,156       782     2,977     5,549
+              Off Peak           15,062    15,635     9,509    40,206    11,717    11,456    12,461    35,634    75,840
+              Other Service       1,390     1,672     1,638     4,700     1,282     1,654     1,915     4,851     9,551
+              Space Heating         111        85       121       317       109       125       103       337       654
+              Water Heating         160       168       130       458       187       101       101       389       847
+ ===========                   ========  ========  ========  ========  ========  ========  ========  ========  ========
+ Commercial                      35,363    42,848    45,161   123,372    33,675    40,334    42,557   116,566   239,938
+ ===========                   ========  ========  ========  ========  ========  ========  ========  ========  ========
+
+ Residential  Area Lights           118       116        91       325        92        95       137       324       649
+              Flood Lights           96        89        75       260        87        75        82       244       504
+              General Service    22,281    21,505    22,556    66,342    22,784    25,977    25,371    74,132   140,474
+              Off Peak            1,152     1,362       698     3,212     1,047       534     1,492     3,073     6,285
+              Other Service         286       238       109       633        33       158       465       656     1,289
+              Space Heating       8,280    10,984    10,111    29,375    13,234    13,723    11,072    38,029    67,404
+              Water Heating       9,589    10,625    14,160    34,374    18,130     8,592     7,654    34,376    68,750
+ ===========                   ========  ========  ========  ========  ========  ========  ========  ========  ========
+ Residential                     41,802    44,919    47,800   134,521    55,407    49,154    46,273   150,834   285,355
+ ===========                   ========  ========  ========  ========  ========  ========  ========  ========  ========
+```
+
