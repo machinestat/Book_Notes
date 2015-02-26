@@ -8,7 +8,7 @@ output: pdf_document
 R's base data structures can be organized by their dimensionality (1d, 2d, or nd) and whether they're homogeneous (all contents must be of the same type) or heterogeneous (the contents can be of different types). This gives rise the five data types most often used in data analysis:
 
 |    | Homogeneous     |  Heterogeneous  |
-|----|:---------------:|----------------:|
+|----|:----------------|:----------------|
 | 1d | Atomic vector   | List            |
 | 2d | Matrix          | Data frame      |
 | nd | Array
@@ -97,8 +97,46 @@ is.list(mod)
 
   1. What are the six types of atomic vector? How does a list differ from an atomic vector?
 
+Answer: The six types of atomic vector are:
 
+ * logical (may contain TRUE, FALSE, NA)
+ * integer
+ * double (often called numeric)
+ * complex
+ * character
+ * raw
+    
+  2. What makes *is.vector()* and *is.numeric()* fundamentally different to *is.list()* and *is.character()*?
 
+Answer: 
+
+ * *is.vector* does not test if an object is a vector, it returns *TRUE* only if a vector has no other attributes than names. we can use *is.atomic() || is.list()* to test if an object is a vector.
+ * *is.numeric()* returns *TRUE* for both integer and double vectors.
+ * both *is.list()* and *is.character()* are for testing if an object is a list or character vector.
+ 
+ 3. Predict the output of the following uses of c() according to vector coercion rules.
+ 
+ c(1, FALSE)  
+ c("a", 1)  
+ c(list(1), "a")  
+ c(TRUE, 1L)  
+ 
+Answer: The coercion rules are two different types elements will be *coerced* to the most flexible type. Types from least to most flexible are: logical, integer, double and character. So,
+
+ * c(1, FALSE) -> double  
+ * c("a", 1) -> character  
+ * c(list(1), "a") -> list  
+ * c(TRUE, 1L) -> integer  
+
+ 4. Why do you need to use *unlist()* to convert a list to an atomic
+vector? Why doesn’t *as.vector()* work?
+
+Answer: a list actually is a vector, so if we use *as.vector()* on a list we get the list itself, so we need to use *unlist()* to convert a list to an atomic vector.
+
+ 5. Why is 1 == "1" true? Why is -1 < FALSE true? Why is "one"
+< 2 false?
+
+Answer: when doing the comparison, 1 automatically coerced to "1", so "1" == "1". Similarly, FALSE coerced to 0 and compared to -1. Finally, 2 coerced to character before compare to "one", so now we compare two characters like sorting and we actually compare "2" and "o". Charcters are translated to UTF-8 before comparison, in UTF-8 coding "2" is 50 and "o" is "111", so "one" is greater than 2.
 
 
 
