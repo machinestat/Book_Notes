@@ -187,9 +187,42 @@ s1 = simple(s), % try various simplification methods and find the simplest
 
 where *s* is the original expression, and *s1* is the simplified result. The string argument *how* will return the method of simplification. Apart from the easy-to-use *simple()* function, the function *collect()* can be used to collect the coeffiecients, and function *expand()* can be used to expand a polynomial. The function *factor()* can be used to perform factorization of a polynomial. The function *numden()* can be used to extract the numerator and enominator from a given expression.
 
+**Example 2.7** If a polynomial *P(s)* is given by $P(s) = \left(s + 3\right)^{2}\left(s^{2}+3s+2\right)\left(s^{3}+12s^{2}+48s+64\right )$, process it with various functions and understand the results
+
+**Solution** Asymbolic variable `s` should be declared first, then the full polynomial can be expressed easily and the polynomial can then be established in MATLAB
+
+```
+>> syms s;
+>> P = (s + 3)^2*(s^2 + 3*s + 2)*(s^3 + 12*s^2 + 48*s + 64);
+>> [P1, m] = simple(P)
+P1 =
+(s + 3)^2*(s + 4)^3*(s^2 + 3*s + 2)
+m =
+simplify
+```
+
+a series of simplications made, find the simplest and one finds that finds that $P_{1} = \left(s + 3\right)^{2}*\left(s + 2\right)*\left(s + 1 \right)*\left(s + 4\right)^{3}$, with the method m = *factor*, which means that factorization method is used reach the coclusion. Also expand() can be tested
+```
+>> expand(P)  %expand the polynomial
+ans =
+s^7 + 21*s^6 + 185*s^5 + 883*s^4 + 2454*s^3 + 3944*s^2 + 3360*s + 1152
+```
+
+The function `subs()` provided in the Symbolic Math Toolbox can be used to perform variable substitution, and the syntaxes are
+$f_{1}=subs\left(f, x_{1}, x_{1}^{*}\right)$ or $f1 = subs\left(f,\left\{x_{1},x_{2},\cdots ,x_{n}\right\}, \left\{x_{1}^{*},x_{2}^{*},\cdots,x_{n}^{*}\right\}\right)$   
+where f is the original expression. With the statement, the variable $x_{1}$ in the original function can be substituted with a new variable or expression $x_{1}^{2}$. The result is given in the variable $f_{1}$. The latter syntax can be used to substitue many variable simultaneously.
 
 
-
+**Example 2.8** For a given function $f\left(t\right)=cos\left(at +b\right)+sin\left(ct\right)sin\left(dt\right)$, evaluate its Taylor expression with the function *taylor()*.  
+```
+>> syms a b c d t;      %declare symbolic variables
+>> f = cos(a*t + b) + sin(c*t)*sin(d*t) %declare the function f(t) with taylor();
+f =
+cos(b + a*t) + sin(c*t)*sin(d*t)
+>> f1=taylor(f)
+f1 =
+cos(b) - t^4*((c^3*d)/6 + (c*d^3)/6 - (a^4*cos(b))/24) + t^2*(c*d - (a^2*cos(b))/2) - a*t*sin(b) + (a^3*t^3*sin(b))/6 - (a^5*t^5*sin(b))/120
+```
 
 
 
