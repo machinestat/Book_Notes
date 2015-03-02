@@ -53,4 +53,51 @@ ANOVA Table for Randomized Complete Blocks Design
 |Error	              |(r-1)(t-1)|MS(Error)| $\sigma^{2}$                |
 
 ## 2.2.3 Using Expeceted Mean Squares
-*Expected mean squares* are the expectations of mean squares, and they are the quantities that are estimated by mean squares in an analysis of variance. The expected mean squares can be used to motivate test statistics, to compute standard errors for means and comparisons of means, and to provide a way to estimate the variance components. The basic idea is to examine the expected mean square for a factor and see how it differs under null and alternative hypothesis. For example, the expected mean square for treatments, $E[MS(Trts)] = \sigma^{2} + r\o^{2}$, can be used to determine how to set up a test statistic for treatment differences.
+*Expected mean squares* are the expectations of mean squares, and they are the quantities that are estimated by mean squares in an analysis of variance. The expected mean squares can be used to motivate test statistics, to compute standard errors for means and comparisons of means, and to provide a way to estimate the variance components. The basic idea is to examine the expected mean square for a factor and see how it differs under null and alternative hypothesis. For example, the expected mean square for treatments, $E[MS(Trts)] = \sigma^{2} + r\o^{2}$, can be used to determine how to set up a test statistic for treatment differences. The null hypothesis is $H_{0}:\mu_{1}=\mu_{2}=\cdots=\mu_{t}$. The expression $\o^{2}$ in E[MS(Trts)] is
+
+$\o^{2}=\left(t-1\right)^{-1}\sum_{i=1}^{t}\left(\mu_{i}-\bar{\mu_{.}}\right)^{2}$
+
+where $\bar{\mu_{.}}$ is the mean of the $\mu_{i}$. Thus, $\o^{2}=0$ is equivalent to $\mu_{1}=\mu_{2}=\cdots=\mu_{t}$. So, if the null hypothesis is true, MS(Trts) simply estimes $\o^{2}$ simply estimates $\sigma^{2}$. On the other hand, if $\mu_{1}=\mu_{2}=\cdots=\mu_{t}$ is false, the E[MS(Trts)] estimates a quantity larger than $\sigma^{2}$. Now MS(Error) estimates $\sigma^{2}$ regardlessof whether $H_{0}$ is true or false. Therefore, MS(Trts) and MS(Error) tend to be approximate the same magnitude if $H_{0}$ is true, and MS(Trts) tends to be larger than MS(Error) if $\mu_{1}=\mu_{2}=\cdots=\mu_{t}$ is false. So a comparison of MS(Trts) with MS(Error) is an indicator of whether $\mu_{1}=\mu_{2}=\cdots=\mu_{t}$ is ture or false. In this way the expected mean squares show that a valid test statistic is the ratio $F = MS(Trt)/MS(Error)$
+
+Expected mean squares also can be used to estimate variance components, variances of treatment means, and differences between treatment means. Equating the observed mean squares to the expected mean squares provides the following system of equations:
+
+$MS(Blks)=\hat{\sigma}^{2}+t\hat{\sigma}_{b}^{2}$  
+$MS(Error)=\hat{\sigma}^{2}$
+
+The solution for the variance component is  
+$\hat{\sigma}^{2} = MS(Error)$  
+and  
+$\hat{\sigma}^{2}_{b} = \frac{1}{t}\left[MS(Blks)-MS(Error)\right]$ 
+
+These are called **analysis of variance** estimates of the variance components. Using these estimates of the variance components,it follows that estimatesof $\hat{Var}\left[\bar{Y}_{1.}\right]$ and $\hat{Var}\left[\bar{Y}_{1.}-\bar{Y}_{2.}\right]$ are
+
+$\hat{Var}\left[\bar{Y}_{1.}\right]=\left(\hat{\sigma}^{2}+\hat{\sigma }_{b}^{2}\right)/r$=$\frac{1}{rt}MS\left(Blks\right)+\frac{t-1}{rt}MS\left(Error\right)$
+
+and
+
+$\hat{Var}\left[\bar{Y}_{1.}-\bar{Y}_{2.}\right]=\frac{2}{r}MS(Error)$
+
+## 2.2.4 Example: A Randomized Complete Blocks Design
+The data set is RCB designed experiment as follow:
+
+```
+Obs    ingot    metal    pres
+
+  1      1        n      67.0
+  2      1        i      71.9
+  3      1        c      72.2
+  4      2        n      67.5
+  5      2        i      68.8
+  6      2        c      66.4
+  .      .        .         .
+  .      .        .         .
+  .      .        .         .
+ 19      7        n      75.6
+ 20      7        i      84.9
+ 21      7        c      69.0
+
+```
+Blocks are ingots of a composition materia, and treatments are metals. Pieces of material from the same ingot are bonded using one of the metals as a bonding agent.
+
+
+
