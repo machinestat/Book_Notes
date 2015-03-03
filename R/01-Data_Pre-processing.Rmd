@@ -89,3 +89,53 @@ $$ x^{*}_{ij}=\frac{x_{ij}}{\sum_{j=1}^{p}x_{ij}^{2}}$$
 
 Since the denominator is intended to measure the squared distance to the center of the predictor's distribution, it is important to center and scale the predictor data prior to using this transformation. This manipulation of predictors transform them as a group, after removing predictor variables after applying spatial sign transformation may be problematic.
 
+### Computing
+```{r}
+library(AppliedPredictiveModeling)
+data(segmentationOriginal)
+segData <- subset(segmentationOriginal, Case == "Train")
+
+# The class and Cell fields will be saved into separate vectors, then removed from the main object.
+
+cellID <- segData$Cell
+Class <- segData$Class
+case <- segData$Case
+# Now remove the columns
+segData <- segData[, -c(1:3)]
+# Remove the original data contained several "status" columns which were binary versin of the predictors.
+statusColNum <- grep("Status", names(segData))
+statusColNum
+segData <- segData[, -statusColNum]
+```
+
+**Transformation**
+
+Some features exhibited significantly skewness. The *skewness* function in the *e1071* package calculates the sample skewness statistic for each predictor:
+```{r}
+library(e1071)
+# For one predictor
+skewness(segData$AngleCh1)
+# Since all the predictors are numeric columns, the apply function can be used to compute the skewness across columns.
+skewValue <- apply(segData, 2, skewness)
+head(skewValue)
+
+# A caret function, BoxCoxTrans, can find the appropriate transformation and apply them to the new data.
+library(caret)
+Ch1AreaTrans <- BoxCoxTrans(segData$AreaCh1)
+Ch1AreaTrans
+
+# The original data
+head(segData$AreaCh1)
+# After transformation
+head(predict(Ch1AreaTrans, segData$AreaCh1))
+(819^(-0.9) - 1)/(-0.9)
+
+```
+
+The R base function prcomp can be used for PCA, the data are centered and scaled prior to PCA.
+```{r}
+pcaObject <- prcomp(segData, center = TRUE, scale. = TRUE)
+# Calculate the cumulative percentage of variance which each component account for
+percentVariance <- pcaObject$sd^2/sum(pcaObject$sd^2)*100
+
+```
