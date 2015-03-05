@@ -1,0 +1,136 @@
+---
+title: "Fundamental Concepts"
+output: pdf_document
+---
+
+## 2.1 Time Series and Stochastic Processes
+
+The sequence of random variables $\left\{Y_{t}:t=0, \pm1, \pm2, \pm3, \cdots \right\}$ is called a **stachastic process** and serves as a model for an observed time series. It is known that the complete probabilistic structure of such a process is determined by the set of distributions of all finite collections of the Y’s. Much of the information in these joint distributions can be described in terms of means, variances, and covariances. Consequently, we concentrate our efforts on these first and second moments.
+
+## 2.2 Means, Variances, and Covariances
+
+For a stochastic process $\left\{Y_{t}:t=0,\pm1, \pm2, \pm3, \cdots\right\}$ the **mean function** is defined by
+
+$\mu_{t}=E(Y_{t})\hspace{1cm}for\hspace{0.2cm}t = 0,\pm1, \pm2,\cdots \hspace{4.4cm}\left ( 2.2.1 \right )$
+
+That is, $\mu_{t}$ is just the expected value of the process at time $t$. In general, $\mu_{t}$ can be different at each time point $t$.
+
+The **autocovariance function**, $\gamma_{t,s}$, is defined as
+
+$\gamma_{t,s} = Cov(Y_{t}, Y_{s})\hspace{1cm} for\hspace{0.2cm}t, s = 0, \pm1, \pm2, \cdots \hspace{3.1cm}\left ( 2.2.2 \right )$
+
+Where $Cov(Y_{t}, Y_{s})=E[(Y_{t}-\mu_{t})(Y_{s}-\mu_{s})] = E(Y_{t}Y_{s})-\mu_{t}\mu_{s}$
+
+The **autocorrelation function**, $\rho_{t,s}$, is given by
+
+$\rho_{t,s}=Corr(Y_{t},Y_{s})\hspace{2cm}for\hspace{0.2cm}t,s=0,\pm1,\pm2,\cdots\hspace{2cm}(2.2.3)$
+
+where
+
+$Corr(Y_{t},Y_{s})=\frac{Cov(Y_{t},Y_{s})}{\sqrt{Var(Y_{t})Var(Y_{s})}}=\frac{\gamma_{t,s}}{\sqrt{\gamma_{t,t}\gamma{s,s}}}\hspace{4cm}(2.2.4)
+$
+
+Both covariance and correlation are measures of the (linear) dependence
+between random variables, and the following important properties follow from known results:
+
+$\left.\begin{matrix}
+\gamma_{t,t}= Var(Y_{t,t})\hspace{1cm}\rho_{t,t}=1\\ 
+\gamma_{t,s}=\gamma_{s,t}\hspace{2.4cm}\rho_{t,s}=\rho_{s,t}\\ 
+\left | \gamma_{t,s} \right |\leq \sqrt{\gamma_{t,t}\gamma_{s,s}}\hspace{1cm}\left | \rho_{t,s}\leq 1 \right |
+\end{matrix}\right\}\hspace{3cm}(2.2.5)$
+
+Values of $\rho_{t,s}$ near ±1 indicate strong (linear) dependence, whereas values near zero indicate weak (linear) dependence. If $\rho_{t,s} = 0$, we say that $Y_{t}$ and $Y_{s}$ are uncorrelated.
+
+To investigate the covariance properties of various time series models, the following result will be used repeatedly: If $c_{1},c_{2},\cdots,c_{m}$ and $d_{1},d_{2},\cdots,d_{n}$ are constants and $t_{1},t_{2},\cdots,t_{m}$ and $s_{1},s_{2},\cdots,s_{n}$ are time points, then
+
+$Cov\left[\sum_{i = 1}^{m}c_{i}Y_{t_{i}}, \sum_{j=1}^{n}d_{j}Y_{s_{j}}\right]=\sum_{i=1}^{m}\sum_{j=1}^{n}c_{i}d_{j}Cov(Y_{t_{i}},Y_{s_{j}})\hspace{3cm}(2.2.6)$
+
+As a special case, we obtain:
+
+$Var\left [ \sum_{i=1}^{n}c_{i}Y_{t_{j}} \right ]=\sum_{i=1}^{n}c_{i}^{2}Var(Y_{t_{i}})+2\sum_{i=2}^{n}\sum_{j=1}^{i-1}c_{i}c_{j}Cov(Y_{t_{i}},Y_{t_{j}})\hspace{1.8cm}(2.2.7)$
+
+### The Random Walk
+
+Let $e1, e2, \cdots$ be a sequence of independent, identically distributed random variables each with zero mean and variance $\sigma_{e}^{2}$. The observed time series, ${Y_{t} : t = 1, 2,\cdots}$ is constructed as follow:
+
+$\left.\begin{matrix}
+Y_{1}=e_{1}\\Y_{2}=e_{1}+e_{2}
+\\ \vdots
+\\ Y_{t}=e_{1}+e_{2}+\cdots+e_{t}
+\end{matrix}\right\}\hspace{3cm}(2.2.8)$
+
+Alternatively, we can write
+
+$Y_{t}=Y_{t-1}+e_{t}$
+
+with “initial condition” $Y_{1} = e_{1}$. If the $e’s$ are interpreted as the sizes of the “steps” taken (forward or backward) along a number line, then $Y_{t}$ is the position of the “random walker” at time t. From Equation (2.2.8), we obtain the mean function
+
+$\mu_{t}=E(Y_{t})=E(e_{1}+e_{2}+\cdots+e_{t})=0$
+
+so that 
+
+$mu_{t} = 0$ for all $t$        (2.2.10)
+
+We also have
+
+$Var(Y_{t})=Var(e_{1}+e_{2}+\cdots+e_{t}) =\sigma_{e}^{2}+\sigma_{e}^{2}+\cdots+\sigma_{e}^{2}$
+
+so that 
+
+$Var(Y_{t}) = t\sigma_{e}^{2}\hspace{3cm}(2.2.11)$
+
+Notice that the process variance increases linearly with time.
+
+For the covariance function, suppose that $1\leq t\leq s$. Then we have:
+
+$\gamma_{t,s}=Cov(Y_{t},Y_{s})=Cov(e_{1}+e_{2}+\cdots+e_{t}, e_{1}+e_{2}+\cdots+e_{t}+e_{t+1}+\cdots+e_{s} )$
+
+From Equation (2.2.6), we have
+
+$\gamma_{t,s}=\sum_{i=1}^{s}\sum_{j=1}^{t}Cov(e_{i},e_{j})$
+
+However, these covariances are zero unless $i = j$, in which case they equal $Var(e_{i}) =\sigma_{e}^{2}$. There are exactly $t$ of these so that $\gamma_{t,s}=t\sigma_{e}^{2}$.
+
+Since $\gamma_{t,s}=\gamma_{s,t}$, this specifies the autocovariance function for all time points $t$ and $s$ and we can write
+
+$\gamma_{t,s}=t\sigma_{e}^{2}\hspace{1cm}for\hspace{0.3cm}1\leq t\leq s \hspace{4cm}(2.2.12)$
+
+The autocorrelation function for the random walk is now easily obtained as
+
+$\rho_{t,s}=\frac{\gamma_{t,s}}{\sqrt{\gamma_{t,t}\gamma_{s,s}}}=\sqrt{\frac{t}{s}}\hspace{1.5cm}for\hspace{0.3cm}1 \leq t \leq s \hspace{2.5cm}(2.2.13)$
+
+The following numerical values help us understand the behavior of the random
+walk.
+
+$\rho_{1,2}=\sqrt{\frac{1}{2}}=0.707 \hspace{2.5cm}\rho_{8,9}=\sqrt{\frac{8}{9}}=0.943 $
+
+$\rho_{24,25} = \sqrt{\frac{24}{25}}=0.980\hspace{2cm}\rho_{1,25}=\sqrt{\frac{1}{25}}=0.200$
+
+The values of $Y$ at neighboring time points are more and more strongly and positively correlated as time goes by. On the other hand, the values of $Y$ at distant time points are less and less correlated.
+
+A simulated random walk is shown in Exhibit 2.1 where the $e$’s were selected from a standard normal distribution. Note that even though the theoretical mean function is zero for all time points, the fact that the variance increases over time and that the correlation between process values nearby in time is nearly 1 indicate that we should expect long excursions of the process away from the mean level of zero.
+
+The simple random walk process provides a good model (at least to a first approximation)for phenomena as diverse as the movement of common stock price, and the position of small particles suspended in a fluid—so-called Brownian motion.
+```{r}
+library(TSA)
+
+## Exhibit 2.1
+data(rwalk) # rwalk contains a simulated random walk
+plot(rwalk,type='o',ylab='Random Walk')
+```
+
+### A Moving Average
+
+Suppose that ${Y_{t}}$ is constructed as
+
+$Y_{t}=frac{e_{t}e_{t-1}}{2}\hspace{3cm}(2.2.14)$
+
+where (always assume) the $e$’s are assumed to be independent and identically distributed with zero mean and variance $\sigma_{e}^{2}$. Here
+
+$\mu_{t}=E(Y_{t})=E\left \{ \frac{e_{t}+e_{t-1}}{2} \right \}=0$
+
+and
+
+$Var(Y_{t})=Var\left \{ \frac{e_{t}+e_{t-1}}{2} \right \}=\frac{Var(e_{t})+Var(e_{t-1})}{4} = 0.5\sigma_{e}^{2}$
+
+
