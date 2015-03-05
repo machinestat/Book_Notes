@@ -71,9 +71,9 @@ points(y=oilfilters,x=time(oilfilters),
 ## 1.2 A Model-Building Strategy
 There are three main steps in the process for finding appropriate models, each of which may be used several times:
 
-    1. *model specification* (or identification)
-    2. *model fitting*
-    3. *model diagnostics*
+    1. model specification (or identification)
+    2. model fitting
+    3. model diagnostics
     
 In model specification (or identification), the classes of time series models are selected that may be appropriate for a given observed series. In this step we look at the time plot of the series, compute many different statistics from the data, and also apply any knowledge of the subject matter in which the data arise. It should be emphasized that the model chosen at this point is _tentative_ and subject to revision later on in the analysis.
 
