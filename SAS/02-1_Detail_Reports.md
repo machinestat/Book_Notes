@@ -453,3 +453,99 @@ And the output is:
  ===========                   ========  ========  ========  ========  ========  ========  ========  ========  ========
 ```
 
+```
+*----------------------------------------------------------*
+|Example 2.6 Suppressing the Display of Specific Columns   |
+|List observations in a data set and summarize selected    |
+|numeric variables. Summarize over all observations and    |
+|summarize within groups. Summarize specific variables     |
+|within an observation and add these summaries as columns  |
+|in the report. Display the summary columns. Do not display|
+|the variables used to calculate the summaries.            |
+|----------------------------------------------------------*;
+
+*Create formats for TYPE and SERVICE.;
+
+proc format;
+	value $type 'res'='Residential'
+				'com'='Commercial';
+	value $service 'gen'='General Service'
+					'wtr'='Water Heating'
+					'op' ='Off Peak'
+					'spc'='Space Heating'
+					'fld'='Flood Lights'
+					'area'='Area Lights'
+					'oth'='Other Service';
+run;
+options ls=120 ps=45;
+title 'Regional Energy';
+title2 'Quarterly Use by Residential and Commercial Customers';
+proc report data=poweruse nowindows split='/';
+	column type service jan feb mar apr may jun
+						quarter1 quarter2 total;
+	define type / order format=$type. width=11 ' ';
+	define service / order format=$service. width=15 'Service';
+	define jan / analysis sum noprint;
+	define feb / analysis sum noprint;
+	define mar / analysis sum noprint;
+	define apr / analysis sum noprint;
+	define may / analysis sum noprint;
+	define jun / analysis sum noprint;
+	define quarter1 / computed 'First/Quarter/Total'
+					width=8	format=comma8.;
+	define quarter2 / computed 'Second/Quarter/Total'
+					width=8 format=comma8.;
+	define total / computed 'Total' width=8
+					format=comma8.;
+
+	compute quarter1;
+		quarter1=sum(jan.sum,feb.sum,mar.sum);
+	endcomp;
+	compute quarter2;
+		quarter2=sum(apr.sum,may.sum,jun.sum);
+	endcomp;
+
+	compute total;
+		total=sum(quarter1,quarter2);
+	endcomp;
+
+	break after type / summarize dol dul skip;
+	rbreak after / summarize dol dul skip;
+run;
+
+output:
+
+Regional Energy
+Quarterly Use by Residential and Commercial Customers
+
+                                   First    Second
+                                 Quarter   Quarter
+               Service             Total     Total     Total
+  Commercial   Area Lights        36,058    36,296    72,354
+               Flood Lights       39,061    36,082    75,143
+               General Service     2,572     2,977     5,549
+               Off Peak           40,206    35,634    75,840
+               Other Service       4,700     4,851     9,551
+               Space Heating         317       337       654
+               Water Heating         458       389       847
+  ===========                   ========  ========  ========
+  Commercial                     123,372   116,566   239,938
+  ===========                   ========  ========  ========
+
+  Residential  Area Lights           325       324       649
+               Flood Lights          260       244       504
+               General Service    66,342    74,132   140,474
+               Off Peak            3,212     3,073     6,285
+               Other Service         633       656     1,289
+               Space Heating      29,375    38,029    67,404
+               Water Heating      34,374    34,376    68,750
+  ===========                   ========  ========  ========
+  Residential                    134,521   150,834   285,355
+  ===========                   ========  ========  ========
+
+                                ========  ========  ========
+                                 257,893   267,400   525,293
+                                ========  ========  ========
+
+```
+
