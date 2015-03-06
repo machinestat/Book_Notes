@@ -61,4 +61,23 @@ Adheres to basic structural requirements. Also adheres to content-specific speci
 * Grammer-like language for specifying elements, attributes, nesting, ordering, #occurrences
 * Also special attribute types ID and IDREF(S)
 
+### DTD/XSD versus none(well-formed)
+* with DTD/XSD: Benefits of "typing"
+   1. Program can assume adheres to structure
+   2. Css/XSL can assume adheres to structure
+   3. Specification
+   4. Documentation
+* without DTD/XSD: Benefits of "no typing"
+   1. Flexibility, ease of change
+   2. DTD can be messy-irregular
+
+### XML Schema(XSD)
+* Extensive language
+* Like DTDs, can specify elements, attributes, nesting, ordering, #occurrences
+* Also data types, keys, (typed) pointers, and more
+
+XSD is written in XML
+
+
+
 
