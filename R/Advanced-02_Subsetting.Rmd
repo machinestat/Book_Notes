@@ -1,0 +1,129 @@
+---
+title: "Subsetting"
+output: html_document
+---
+
+## 2.1 Data types
+
+It’s easiest to learn how subsetting works for atomic vectors, and then how it generalises to higher dimensions and other more complicated objects.
+
+### 2.1.1 Atomic vectors
+
+explore the different types of subsetting with a simple vector, x
+
+```{r}
+x <- c(2.1, 4.2, 3.3, 5.4)
+# the number after the decimal point gives the original position in the vector.
+
+# Positive integers return elements at the specified positions:
+x[c(3, 1)]
+x[order(x)]
+#  Duplicated indices yield duplicated values
+x[c(1, 1)]
+# Real numbers are silently truncated to integers
+x[c(2.1, 2.9)]
+
+# Negative integers omit elements at the specified positions:
+x[-c(3, 1)]
+# Cannot mix positive and negative integers in a single subset:
+# x[c(-1, 2)]
+# Error in x[c(-1, 2)] : only 0's may be mixed with negative subscripts
+
+#  Logical vectors select elements where the corresponding logical value is TRUE.
+x[c(TRUE, TRUE, FALSE, FALSE)]
+x[x > 3]
+# A missing value in the index always yields a missing value in the output:
+x[c(TRUE, TRUE, NA, FALSE)]
+
+
+# Nothing returns the original vector.
+x[]
+
+# • Zero returns a zero-length vector.
+x[0]
+
+# Use character vectors to return elements with matching names  when the vector is named
+(y <- setNames(x, letters[1:4]))
+y[c("d", "c", "a")]
+```
+
+### 2.1.2 Lists
+
+Subsetting a list works in the same way as subsetting an atomic vector.
+
+### 2.1.3 Matrices and arrays
+
+Subset higher-dimensional structures in three ways:
+
+* With multiple vectors.
+* With a single vector.
+* With a matrix.
+
+```{r}
+a <- matrix(1:9, nrow = 3)
+colnames(a) <- c("A", "B", "C")
+a[1:2, ]
+a[c(T, F, T), c("B", "A")]
+
+# Because matrices and arrays are implemented as vectors with special attributes, you can subset them with a single vector. In that case, they will behave like a vector. Arrays in R are stored in column-major order
+(vals <- outer(1:5, 1:5, FUN = "paste", sep = ","))
+vals[c(4, 15)] 
+
+# Subset higher-dimensional data structures with an integer matrix (or, if named, a character matrix). Each row in the matrix specifies the location of one value, where each column corresponds to a dimension in the array being subsetted.
+vals <- outer(1:5, 1:5, FUN = "paste", sep = ",")
+select <- matrix(ncol = 2, byrow = TRUE, c( 1, 1,
+                                            3, 1,
+                                            2, 4
+                                            ))
+vals[select]
+```
+
+### 2.1.4 Data frames
+
+Data frames possess the characteristics of both lists and matrices: if you subset with a single vector, they behave like lists; if you subset with two vectors, they behave like matrices.
+
+```{r}
+df <- data.frame(x = 1:3, y = 3:1, z = letters[1:3])
+df[df$x == 2, ]
+df[c(1, 3), ]
+
+# There are two ways to select columns from a data frame
+# Like a list:
+df[c("x", "z")]
+# Like a matrix
+df[, c("x", "z")]
+
+# There's an important difference if you select a single
+# column: matrix subsetting simplifies by default, list
+# subsetting does not.
+str(df["x"])
+str(df[, "x"])
+```
+
+### 2.1.5 S3 objects
+
+S3 objects are made up of atomic vectors, arrays, and lists, so you can always pull apart an S3 object using the techniques described above and the knowledge you gain from `str()`.
+
+### 2.1.6 S4 objects
+There are also two additional subsetting operators that are needed for S4 objects: @ (equivalent to $), and slot() (equivalent to [[). @ is more restrictive than $ in that it will return an error if the slot does not exist.
+
+### 2.1.7 Exercises
+
+1. Fix each of the following common data frame subsetting errors:
+    mtcars[mtcars$cyl = 4, ] 
+    mtcars[-1:4, ] 
+    mtcars[mtcars$cyl <= 5]
+    mtcars[mtcars$cyl == 4 | 6, ]
+    
+    ```{r}
+        mtcars[mtcars$cyl == 4, ]
+        mtcars[-c(1:4), ]
+        mtcars[mtcars$cyl <= 5, ]
+        mtcars[mtcars$cyl == 4 | mtcars$cyl == 6, ]
+    ```
+    
+2. Why does x <- 1:5; x[NA] yield five missing values?
+
+
+
+
