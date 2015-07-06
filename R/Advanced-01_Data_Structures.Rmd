@@ -97,22 +97,22 @@ is.list(mod)
 
 1. What are the six types of atomic vector? How does a list differ from an atomic vector?
 
-Answer: The six types of atomic vector are:
-
- * logical (may contain TRUE, FALSE, NA)
- * integer
- * double (often called numeric)
- * complex
- * character
- * raw
+    Answer: The six types of atomic vector are:
+    
+     * logical (may contain TRUE, FALSE, NA)
+     * integer
+     * double (often called numeric)
+     * complex
+     * character
+     * raw
     
 2. What makes `is.vector()` and `is.numeric()` fundamentally different to `is.list()` and `is.character()`?
 
-Answer: 
-
- (1) `is.vector` does not test if an object is a vector, it returns *TRUE* only if a vector has no other attributes than names. we can use `is.atomic() || is.list()` to test if an object is a vector.
- (2) `is.numeric()` returns *TRUE* for both integer and double vectors.
- (3) `is.list()` and `is.character()` are for testing if an object is a list or character vector.
+    Answer: 
+    
+     (1) `is.vector` does not test if an object is a vector, it returns *TRUE* only if a vector has no other attributes than names. we can use `is.atomic() || is.list()` to test if an object is a vector.
+     (2) `is.numeric()` returns *TRUE* for both integer and double vectors.
+     (3) `is.list()` and `is.character()` are for testing if an object is a list or character vector.
  
 3. Predict the output of the following uses of c() according to vector coercion rules.
  
@@ -121,26 +121,26 @@ Answer:
  c(list(1), "a")  
  c(TRUE, 1L)  
  
-Answer: The coercion rules are two different types elements will be *coerced* to the most flexible type. Types from least to most flexible are: logical, integer, double and character. So,
-
- * c(1, FALSE) -> double  
- * c("a", 1) -> character  
- * c(list(1), "a") -> list  
- * c(TRUE, 1L) -> integer  
+    Answer: The coercion rules are two different types elements will be *coerced* to the most flexible type. Types from least to most flexible are: logical, integer, double and character. So,
+    
+     * c(1, FALSE) -> double  
+     * c("a", 1) -> character  
+     * c(list(1), "a") -> list  
+     * c(TRUE, 1L) -> integer  
 
 4. Why do you need to use `unlist()` to convert a list to an atomic vector? Why doesn't `as.vector()` work?
 
-Answer: a list actually is a vector, so if we use `as.vector()` on a list we get the list itself, so we need to use `unlist()` to convert a list to an atomic vector.
+    Answer: a list actually is a vector, so if we use `as.vector()` on a list we get the list itself, so we need to use `unlist()` to convert a list to an atomic vector.
 
 5. Why is 1 == "1" true? Why is -1 < FALSE true? Why is "one" < 2 false?
 
-Answer: when doing the comparison, 1 automatically coerced to "1", so "1" == "1". Similarly, FALSE coerced to 0 and compared to -1. Finally, 2 coerced to character before compare to "one", so now we compare two characters like sorting and we actually compare "2" and "o". Charcters are translated to UTF-8 before comparison, in UTF-8 coding "2" is 50 and "o" is "111", so "one" is greater than 2.
+    Answer: when doing the comparison, 1 automatically coerced to "1", so "1" == "1". Similarly, FALSE coerced to 0 and compared to -1. Finally, 2 coerced to character before compare to "one", so now we compare two characters like sorting and we actually compare "2" and "o". Charcters are translated to UTF-8 before comparison, in UTF-8 coding "2" is 50 and "o" is "111", so "one" is greater than 2.
 
 6. Why is the default missing value, NA, a logical vector? What's special about logical vectors? 
 
-Missing values are specified with NA, which is a logical vector of length
-1. NA will always be coerced to the correct type if used inside c(), or
-we can create NAs of a specific type with `NA_real_` (a double vector), `NA_integer_` and `NA_character_`.
+    Missing values are specified with NA, which is a logical vector of length
+    1. NA will always be coerced to the correct type if used inside c(), or
+    we can create NAs of a specific type with `NA_real_` (a double vector), `NA_integer_` and `NA_character_`.
 
 ## 1.2 Attributes
 
@@ -232,33 +232,33 @@ string methods (like `gsub()` and `grepl()`) will coerce factors to strings, whi
 
 1. An early draft used this code to illustrate structure():
  
-```
-structure(1:5, comment = "my attribute")
-#> [1] 1 2 3 4 5
-```
-But when you print that object you don’t see the comment attribute. Why? Is the attribute missing, or is there something else special about it? 
-
-Answer: Unlike other attributes, the comment is not printed by `print` function. Use function `comment` to query or set a `comment` attribute.
-```{r}
-comment(structure(1:5, comment = "my attribute"))
-```
+    ```
+    structure(1:5, comment = "my attribute")
+    #> [1] 1 2 3 4 5
+    ```
+    But when you print that object you don’t see the comment attribute. Why? Is the attribute missing, or is there something else special about it? 
+    
+    Answer: Unlike other attributes, the comment is not printed by `print` function. Use function `comment` to query or set a `comment` attribute.
+    ```{r}
+    comment(structure(1:5, comment = "my attribute"))
+    ```
 
 2. What happens to a factor when you modify its levels?
  
-```
-f1 <- factor(letters)
-levels(f1) <- rev(levels(f1))
-```
-
-The values in the factor variable will be reversed.
+    ```
+    f1 <- factor(letters)
+    levels(f1) <- rev(levels(f1))
+    ```
+    
+    The values in the factor variable will be reversed.
 
 3. What does this code do? How do f2 and f3 differ from f1?
  
-```
-f2 <- rev(factor(letters))
-f3 <- factor(letters, levels = rev(letters))
-```
-f2 has the same values as the f1 but reversed levels, f3 has the levels as the f1 but reversed values.
+    ```
+    f2 <- rev(factor(letters))
+    f3 <- factor(letters, levels = rev(letters))
+    ```
+    f2 has the same values as the f1 but reversed levels, f3 has the levels as the f1 but reversed values.
 
 ## 1.3 Matrices and Arrays
 Adding a dim() attribute to an atomic vector allows it to behave like a multi-dimensional array. A special case of the array is the matrix, which has two dimensions.
@@ -326,7 +326,9 @@ l
   1. What does dim() return when applied to a vector?
  
     ```
-    It will return "NULL". The dim() function retrieves or sets the dimension of an R object, for example a matrix, array or data frame. For an array (and hence in particular, for a matrix) dim retrieves the dim attribute of the object. It is NULL or a vector of mode integer.
+    It will return "NULL". The dim() function retrieves or sets the dimension of an R object, 
+    for example a matrix, array or data frame. For an array (and hence in particular, for a matrix) 
+    dim retrieves the dim attribute of the object. It is NULL or a vector of mode integer.
     ```
   2. If is.matrix(x) is TRUE, what will is.array(x) return? 
  
