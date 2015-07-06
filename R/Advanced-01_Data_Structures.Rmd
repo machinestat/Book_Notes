@@ -345,4 +345,97 @@ l
     ## These are three dimensional arrays.
     ```
 
-  
+## 1.4 Data frames
+A data frame is a list of equal-length vectors. This makes it a 2-dimensional structure, so it shares properties of both the matrix and the list. This means that a data frame has 'names()', 'colnames()', and 'rownames()'. The 'length()' of a data frame is the length of the underlying list and so is the same as 'ncol()'; 'nrow()' gives the number of rows.
+
+### 1.4.1 Creation
+
+create a data frame using data.frame() takes named vectors as input:
+```{r}
+df <- data.frame(x = 1:3, y = c("a", "b", "c"))
+str(df)
+```
+
+Beware data.frame()’s default behaviour which turns strings into factors. Use stringAsFactors = FALSE to suppress this behaviour:
+```{r}
+df <- data.frame(
+        x = 1:3,
+        y = c("a", "b", "c"),
+        stringsAsFactors = FALSE)
+str(df)
+```
+
+### 1.4.2 Testing and coercion
+
+Because a data.frame is an S3 class, its type reflects the underlying vector used to build it: the list. To check if an object is a data frame, use `class()` or test explicitly with `is.data.frame()`:
+```{r}
+typeof(df)
+class(df)
+is.data.frame(df)
+```
+
+Coerce an object to a data frame with `as.data.frame()`:
+
+* A vector will create a one-column data frame.
+* A list will create one column for each element; it’s an error if they’re
+not all the same length.
+* A matrix will create a data frame with the same number of columns
+and rows.
+
+### 1.4.3 Combining data frames
+
+Combine data frames using `cbind()` and `rbind()`:
+```{r}
+cbind(df, data.frame(z = 3:1))
+rbind(df, data.frame(x = 10, y = "z"))
+```
+
+Use `plyr::rbind.fill()` to combine data frames that don’t have the same columns.
+
+### 1.4.4 Special columns
+
+Since a data frame is a list of vectors, it is possible for a data frame to have a column that is a list:
+
+```{r}
+df <- data.frame(x = 1:3)
+df$y <- list(1:2, 1:3, 1:4)
+df
+```
+
+However, when a list is given to data.frame(), it tries to put each item of the list into its own column, so this fails:
+
+```
+data.frame(x = 1:3, y = list(1:2, 1:3, 1:4))
+> data.frame(x = 1:3, y = list(1:2, 1:3, 1:4))
+Error in data.frame(1:2, 1:3, 1:4, check.names = FALSE, stringsAsFactors = TRUE) : 
+  arguments imply differing number of rows: 2, 3, 4
+
+```
+
+A workaround is to use I(), which causes data.frame() to treat the list as one unit:
+
+```{r}
+dfl <- data.frame(x = 1:3, y = I(list(1:2, 1:3, 1:4)))
+str(dfl)
+```
+Similarly, it’s also possible to have a column of a data frame that’s a matrix or array, as long as the number of rows matches the data frame:
+    
+```{r}
+dfm <- data.frame(x = 1:3, y = I(matrix(1:9, nrow = 3)))
+str(dfm)
+dfm[2, "y"]
+```
+
+### 1.4.5 Exercises
+
+1. What attributes does a data frame possess?
+
+    a data frame has 'names', 'row.names' and 'class' attributes.
+    
+2. What does as.matrix() do when applied to a data frame with columns of different types?
+
+    Coerce the columns to the same type.
+
+3. Can you have a data frame with 0 rows? What about 0 columns?
+
+    We can have a data frame with 0 rows and 0 columns.
