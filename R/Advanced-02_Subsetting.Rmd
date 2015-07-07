@@ -123,7 +123,59 @@ There are also two additional subsetting operators that are needed for S4 object
     ```
     
 2. Why does x <- 1:5; x[NA] yield five missing values?
+    The rules for logical indices applies in this case, and it recycles since it is shorter than the elements(which is 5) in x, so the results are five elements as in original x. Since a missing value in the index always yields a missing value in the output they are NAs. NA_real is a constant missing value when using as x[NA_real_] so it will result a single NA.
 
+3. What does `upper.tri()` return? How does subsetting a matrix with it work? Do we need any additional subsetting rules to describe its behaviour?
+    x <- outer(1:5, 1:5, FUN = "*")
+    x[upper.tri(x)]
 
+    `upper.tri()` returns a matrix of logicals the same size of a given matrix with entries TRUE in the lower or upper triangle.
+
+4. Why does mtcars[1:20] return a error? How does it differ from the similar mtcars[1:20, ]?
+    we need to specify both row and column indeces for a data frame.
+    
+5. Implement your own function that extracts the diagonal entries from a matrix (it should behave like diag(x) where x is a matrix).
+
+6. What does df[is.na(df)] <- 0 do? How does it work?
+    Change the missing values in df to 0s.
+    
+## 2.2 Subsetting operators
+
+There are two other subsetting operators: [[ and $. [[ is similar to [, except it can only return a single value and it allows you to pull pieces out of a list. $ is a useful shorthand for [[ combined with character subsetting. When [ is applied to a list it always returns a list, use [[ to get the contents of a list.
+
+    “If list x is a train carrying objects, then x[[5]] is the object in car 5; x[4:6] is a train of cars 4-6.” — @RLangTip
+    
+```{r}
+# must use [[ with either a single positive integer or a string:
+a <- list(a = 1, b = 2)
+a[[1]]
+a[["a"]]
+
+# If you do supply a vector it indexes recursively
+b <- list(a = list(b = list(c = list(d = 1))))
+b[[c("a", "b", "c", "d")]]
+b[["a"]][["b"]][["c"]][["d"]]
+```
+
+### 2.2.1 Simplifying vs. preserving subsetting
+
+Simplifying subsets returns the simplest possible data structure that can represent the output, and is useful interactively because it usually gives you what you want. Preserving subsetting keeps the structure of the output the same as the input, and is generally better for programming because the result will always be the same type. Omitting `drop = FALSE` when subsetting matrices and data frames is one of the most common sources of programming errors. 
+
+|          | Simplifying       | Preserving            |
+|----------|-------------------|-----------------------|
+| Vector   | x[[1]]            | x[1]                  |
+| List     | x[[1]]            | x[1]                  |
+| Factor   | x[1:4, drop = T]  | x[1:4]                |
+| Array    | x[1, ] or x[, 1]  | x[1, , drop = F] or x[, 1, drop = F] |
+| Data frame | x[, 1] or x[[1]] | x[, 1, drop = F] or x[1] |
+
+Preserving is the same for all data types: you get the same type of output as input. Simplifying behaviour varies slightly between different data types, as described below:
+
+* Atomic vector: removes names.
+```{r}
+  x <- c(a = 1, b = 2)
+  x[1]
+  x[[1]]
+```
 
 
