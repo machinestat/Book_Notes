@@ -178,4 +178,112 @@ Preserving is the same for all data types: you get the same type of output as in
   x[[1]]
 ```
 
+* List: return the object inside the list, not a single element list.
+```{r}
+y <- list(a = 1, b = 2)
+str(y[1])
+str(y[[1]])
+```
 
+* Factor: drops any unused levels.
+```{r}
+z <- factor(c("a", "b"))
+z[1]
+z[1, drop = TRUE]
+```
+
+* Matrix or array: if any of the dimensions has length 1, drops that dimension.
+```{r}
+a <- matrix(1:4, nrow = 2)
+a[1, , drop = FALSE]
+a[1, ]
+```
+
+* Data frame: if output is a single column, returns a vector instead of a data frame.
+```{r}
+df <- data.frame(a = 1:2, b = 1:2)
+str(df[1])
+str(df[[1]])
+str(df[, "a", drop = FALSE])
+str(df[, "a"])
+```
+
+### 2.2.2 `$`
+
+`$` is a shorthand operator, where `x$y` is equivalent to `x[["y", exact = FALSE]]`. It’s often used to access variables in a data frame, as in `mtcars$cyl` or `diamonds$carat`.
+
+One common mistake with `$` is to try and use it when you have the name of a column stored in a variable:
+```{r}
+var <- "cyl"
+# Doesn't work - mtcars$var translated to mtcars[["var"]]
+mtcars$var
+
+# Instead use [[
+mtcars[[var]]
+```
+
+There’s one important difference between $ and [[. $ does partial matching:
+```{r}
+x <- list(abc = 1)
+x$a
+#> [1] 1
+x[["a"]]
+#> NULL
+```
+
+### 2.2.3 Missing/out of bounds indices
+
+[ and [[ differ slightly in their behaviour when the index is out of bounds (OOB)
+```{r}
+x <- 1:4
+str(x[5])
+str(x[NA_real_])
+str(x[NULL])
+```
+
+The following table summarises the results of subsetting atomic vectors and lists with [ and [[ and different types of OOB value.
+
+| Operator   | Index    |  Atomic   | List         |
+|------------|----------|-----------|--------------|
+| [          | OOB      | NA        | list(NULL)   |
+| [          | NA_real_ | NA        | list(NULL)   |
+| [          | NULL     | x[0]      | list(NULL)   |
+| [[         | OOB      | Error     | Error        |
+| [[         | NA_real_ | Error     | NULL         |
+| [[         | NULL     | Error     | Error        |
+
+### 2.2.4 Exercises
+1. Given a linear model, e.g., mod <- lm(mpg ~ wt, data = mtcars), extract the residual degrees of freedom. Extract the R squared from the model summary (summary(mod))
+```{r}
+mod <- lm(mpg ~ wt, data = mtcars)
+mod$df.residual
+summary(mod)$r.squared
+```
+
+## 2.3 Subsetting and assignment
+
+All subsetting operators can be combined with assignment to modify selected values of the input vector.
+
+```{r}
+x <- 1:5
+x[c(1, 2)] <- 2:3
+x
+
+# The length of the LHS needs to match the RHS
+x[-1] <- 4:1
+
+# Note that there's no checking for duplicate indices
+x[c(1, 1)] <- 2:3
+
+# You can't combine integer indices with NA
+x[c(1, NA)] <- c(1, 2)
+
+# But you can combine logical indices with NA
+# (where they're treated as false).
+x[c(T, F, NA)] <- 1
+
+# This is mostly useful when conditionally modifying vectors
+df <- data.frame(a = c(1, 10, NA))
+df$a[df$a < 5] <- 0
+df$a
+```
