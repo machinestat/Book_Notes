@@ -1,0 +1,21 @@
+---
+title: "Linear Regression and Its Cousins"
+
+output: pdf_document
+---
+
+## 6.1 Case Study: Quantitative Structure-Activity Relationship Modeling
+
+Chemicals, including drugs, can be represented by chemical formulas. For example, the structure of aspirin contains nine carbon, eight hydrogen, and four oxygen atoms. From this configuration, quantitative
+measurements can be derived, such as the molecular weight, electrical
+charge, or surface area. These quantities are referred to as chemical descriptors, and there are myriad types of descriptors that can be derived from a chemical equation.
+
+Some characteristics of molecules cannot be analytically determined from the chemical structure. For example, one way a compound may be of medical value is if it can inhibit production of a specific protein.  This is usually called the biological activity of a compound. The relationship between the chemical structure and its activity can be complex.  As such, the relationship is usually determined empirically using experiments. One way to do this is to create a biological assay for the target of interest (i.e., the protein). A set of compounds can then be placed into the assay and their activity, or inhibition, is measured. This activity information generates data which can be used as the training set for predictive modeling so that compounds, which may not yet exist, can be screened for activity. This process is referred to as quantitative structure-activity relationship (QSAR) modeling.
+
+For our analyses, we will use 1,267 compounds and a set of more understandable descriptors that fall into one of three groups:
+
+* Two hundred and eight binary “fingerprints” that indicate the presence or absence of a particular chemical substructure.
+
+* Sixteen count descriptors, such as the number of bonds or the number of bromine atoms.
+
+* Four continuous descriptors, such as molecular weight or surface area.
