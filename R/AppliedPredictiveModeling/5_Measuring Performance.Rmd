@@ -1,0 +1,74 @@
+---
+title: "Measuring Performance in Regression Models"
+output: pdf_document
+---
+
+## 5.1 Quantitative Measures of Performance
+
+When the outcome is a number, the most common method for characterizing a model’s predictive capabilities is to use the root mean squared error (RMSE). This metric is a function of the model residuals, which are the observed values minus the model predictions. The value is usually interpreted as either how far(on average) the residuals are from zero or as the average distance between the observed values and the model predictions.
+
+Another common metric is the coefficient of determination, commonly
+written as $R^2$. This value can be interpreted as the proportion of the information in the data that is explained by the model. While this is an easily interpretable statistic, the practitioner must remember
+that $R^2$ is a measure of correlation, not accuracy. It is also important to realize that R2 is dependent on the variation in the
+outcome. 
+
+## 5.2 The Variance-Bias Trade-of
+
+The MSE can be decomposed into more specific pieces.
+
+$MSE = \frac{1}{n}\sum_{i=1}^{n}\left ( y_{i}-\hat{y}_{i} \right )^2$
+
+If we assume that the data points are statistically independent and
+that the residuals have a theoretical mean of zero and a constant variance of $σ^2$, then
+
+$E\left ( MSE \right )=\sigma ^{2}+\left ( Model Bias \right )^2+Model Variance$   
+
+The first part ($\sigma^2$) is usually called “irreducible noise” and cannot be eliminated by modeling. The second term is the squared
+bias of the model. This reflects how close the functional form of the model can get to the true relationship between the predictors and the outcome. The last term is the model variance.
+
+It is generally true that more complex models can have very high variance, which leads to over-fitting. On the other hand, simple models tend not to over-fit, but under-fit if they are not flexible enough to model the true relationship (thus high bias). Also, highly correlated predictors can lead to collinearity issues and this can greatly increase the model variance.
+
+## 5.3 Computing
+
+To compute model performance, the observed and predicted outcomes
+should be stored in vectors. For regression, these vectors should be numeric.
+
+```{r}
+# Use the 'c' function to combine numbers into a vector
+observed <- c(0.22, 0.83, -0.12, 0.89, -0.23, -1.30, -0.15, -1.4,
+                0.62, 0.99, -0.18, 0.32, 0.34, -0.30, 0.04, -0.87,
+                0.55, -1.30, -1.15, 0.20)
+
+predicted <- c(0.24, 0.78, -0.66, 0.53, 0.70, -0.75, -0.41, -0.43,
+                0.49, 0.79, -1.19, 0.06, 0.75, -0.07, 0.43, -0.42,
+                -0.25, -0.64, -1.26, -0.07)
+
+residualValues <- observed - predicted
+summary(residualValues)
+```
+
+A plot of the observed values against the predicted values helps one to understand how well the model fits. Also, a plot of the residuals
+versus the predicted values can help uncover systematic patterns in the model predictions
+```{r}
+# Observed values versus predicted values
+# It is a good idea to plot the values on a common scale.
+axisRange <- extendrange(c(observed, predicted))
+plot(observed, predicted,
+     ylim = axisRange,
+     xlim = axisRange)
+#Add a 45 degree reference line
+abline(0, 1, col = "darkgrey", lty = 2)
+
+# Predicted values versus residuals
+plot(predicted, residualValues, ylab = "residual")
+abline(h = 0, col = "darkgrey", lty = 2)
+
+# The caret package contains functions for calculating the RMSE and the R2 value:
+library(caret)
+R2(predicted, observed)
+RMSE(predicted, observed)
+
+# Simple correlation
+cor(predicted, observed)
+# Rank correlation
+cor(predicted, observed, method = "spearman")
