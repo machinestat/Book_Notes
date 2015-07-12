@@ -449,3 +449,201 @@ RUN;
 TITLE "Listing of Data Set o_modifier";
 PROC PRINT DATA = o_modifier NOOBS heading = h;
 RUN;
+
+/*Function: FINDW*/
+/*Purpose: To search a string for a word, defined as a group of letters separated on both ends by a word */
+/*         boundary (a space, the beginning of a string, or the end of the string).*/
+/*Syntax: FINDW(char-value, word <, delim>) or*/
+/*        FINDW(char_value, word, delim, modifier<,start>)*/
+/*Program 1.18: Searching for a word using the FINDW function*/
+DATA Find_word;
+    INPUT String $40.;
+    Position_w = FINDW(String, "the");
+    Position = FIND(String, "the");
+DATALINES;
+there is a the in this line
+ends in the
+ends in the.
+none here
+;
+RUN;
+TITLE "Listing of Data Set Find_Word";
+PROC PRINT DATA = Find_Word;
+RUN;
+
+/*Function: INDEX*/
+/*Purpose: To locate the starting position of a substring in a string.*/
+/*Syntax: INDEX(character-value, find-string)*/
+/**/
+/*Function: INDEXC*/
+/*Purpose: To search a character string for one or more characters. It can be used to search for any one in */
+/*a list of character values.*/
+/*Syntax: INDEXC(character-value, 'char1','char2','char3',...) OR*/
+/*        INDEXC(character-value, 'char1char2char3. . .')*/
+/*Program 1.19: Reading dates in a mixture of formats*/
+DATA Mixed_Dates;
+    INPUT @1 Dummy $15.;
+    IF INDEXC(Dummy, '/-:') THEN Date = INPUT(Dummy, mmddyy10.);
+    ELSE Date = INPUT(Dummy, date9.);
+    FORMAT Date worddate.;
+DATALINES;
+10/21/1946
+06JUN2002
+5-10-1950
+7:9:57
+;
+RUN;
+TITLE "Listing of Data Set MIXED_DATES";
+PROC PRINT DATA = Mixed_Dates NOOBS;
+RUN;
+
+/*Function: VERIFY*/
+/*Purpose: To check whether a string contains any unwanted values.*/
+/*Syntax: VERIFY(character-value, verify-string)*/
+/*Program 1.20: Using the VERIFY function to check for invalid character data values*/
+DATA Very_Fi;
+    INPUT ID     $ 1-3
+          Answer $ 5-9;
+    P = VERIFY(Answer, 'ABCDE');
+    OK = P EQ 0;
+DATALINES;
+001 ACBED
+002 ABXDE
+003 12CCE
+004 ABC E
+;
+RUN;
+TITLE "listing of Data Set VERY_FI";
+PROC PRINT DATA = Very_Fi NOOBS;
+RUN;
+
+/*Functions That Extract Parts of Strings */
+/*Function: SUBSTR*/
+/*Purpose: To extract part of a string. When the SUBSTR function is used on the left side of the equal sign, */
+/*it can place specified characters into an existing string.*/
+/*Syntax: SUBSTR(character-value, start <,length>)*/
+/*Program 1.21: Extracting portions of a character value and creating a character variable and a numeric value*/
+DATA Substring;
+    INPUT ID $ 1-9;
+    LENGTH State $ 2;
+    State = ID;
+    Num = INPUT(SUBSTR(ID, 7), 3.);
+DATALINES;
+NYXXXX123
+NJ1234567
+;
+RUN;
+TITLE 'Listing of Data Set SUBSTRING';
+PROC PRINT DATA = Substring NOOBS;
+RUN;
+
+/*Program 1.22: Extracting the last two characters from a string, regardless of the length*/
+DATA Extract;
+    INPUT @1 String $20.;
+    Last_Two = SUBSTR(String, LENGTH(String) - 1);
+DATALINES;
+ABCDE
+AX12345NY
+126789
+;
+RUN;
+TITLE "Listing of Data Set EXTRACT";
+PROC PRINT DATA = Extract NOOBS;
+RUN;
+
+/*Program 1.23: Using the SUBSTR function to "unpack" a string*/
+DATA Pack;
+    INPUT String $ 1-5;
+DATALINES;
+12345
+8 642
+;
+RUN;
+DATA Unpack;
+    SET Pack;
+    ARRAY x[5];
+    DO j = 1 TO 5;
+        x[j] = INPUT(SUBSTR(String, j, 1), 1.);
+    END;
+    DROP j;
+RUN;
+TITLE "Listing of Data Set UNPACK";
+PROC PRINT DATA = Unpack NOOBS;
+RUN;
+
+/*Function: SUBSTR (on the left-hand side of the equal sign)*/
+/*Purpose: To place one or more characters into an existing string.*/
+/*Syntax: SUBSTR(character-value, start <, length>) = character-value*/
+/*Program 1.24: Demonstrating the SUBSTR function on the left-hand side of the equal sign*/
+DATA Stars;
+    INPUT SBP DBP @@;
+    LENGTH SBP_chk DBP_chk $ 4;
+    SBP_chk = PUT(SBP, 3.);
+    DBP_chk = PUT(DBP, 3.);
+    IF SBP GT 160 THEN SUBSTR(SBP_chk, 4, 1) = '*';
+    IF DBP GT 90 THEN SUBSTR(DBP_chk, 4, 1) = '*';
+DATALINES;
+120 80 180 92 200 110
+;
+TITLE "Listing of data set STARS";
+PROC PRINT DATA = Stars NOOBS;
+RUN;
+
+/*Function: SUBSTRN*/
+/*Purpose: This function serves the same purpose as the SUBSTR function with a few added features.*/
+/*         The starting position and the length arguments of the SUBSTRN function can be 0 or */
+/*         negative withoutcausing an error. if the length is 0, the function returns a string of */
+/*         0 length.*/
+/*Syntax: SUBSTRN(character-value, start <, length>)*/
+/*Program 1.25: Demonstrating the unique features of the SUBSTRN function*/
+TITLE "Demonstring the SUBSTRN Function";
+DATA Hoagie;
+    String = 'abcdefghij';
+    LENGTH Result $5.;
+    Result = SUBSTRN(String, 2, 5);
+    Sub1 = SUBSTRN(String, -1, 4);
+    Sub2 = SUBSTRN(String, 3, 0);
+    Sub3 = SUBSTRN(String, 7, 5);
+    Sub4 = SUBSTRN(String, 0, 2);
+    FILE PRINT;
+    PUT "Original string =" @25 String /
+         "Substrn(string,2,5) =" @25 Result /
+         "Substrn(string,-1,4) =" @25 Sub1 /
+         "Substrn(string,3,0) =" @25 Sub2 /
+         "Substrn(string,7,5) =" @25 Sub3 /
+         "Substrn(string,0,2) =" @25 Sub4;
+RUN;
+
+/*Function: CHAR*/
+/*Purpose: To extract a single character from a string. The default length of the result is 1 byte.*/
+/*Syntax: CHAR(character-value, position)*/
+/*Program 1.26: Demonstrating the CHAR function*/
+***Other functions: LENGTHC;
+DATA Char;
+    String = "ABC123";
+    First = CHAR(String, 1);
+    Length = LENGTHC(First);
+    Second = CHAR(String, 2);
+    Beyond = CHAR(String, 9);
+    L_Beyond = LENGTHC(Beyond);
+RUN;
+TITLE "Demonstrating the CHAR Function";
+PROC PRINT DATA = Char NOOBS;
+RUN;
+
+/*Function: FIRST*/
+/*Purpose: To extract the first character from a string.*/
+/*Syntax: FIRST(character-value)*/
+/*Program 1.27: Demonstrating the FIRST function*/
+DATA Names;
+    INPUT (First Middle Last)(: $10.);
+    Initials = FIRST(First) || FIRST(Middle) || FIRST(Last);
+DATALINES;
+Brian Page Watson
+Sarah Ellen Washington
+Nelson W. Edwards
+;
+RUN;
+TITLE "Listing of data set NAMES";
+PROC PRINT DATA = Names NOOBS;
+RUN;
