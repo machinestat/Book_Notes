@@ -647,3 +647,108 @@ RUN;
 TITLE "Listing of data set NAMES";
 PROC PRINT DATA = Names NOOBS;
 RUN;
+
+/*Functions That Join Two or More Strings Together*/
+/*Function: CALL CATS*/
+/*Purpose: To concatenate two or more strings, removing both leading and trailing blanks before the */
+/*         concatenation takes place.*/
+/*Syntax: CALL CATS(result, string-1 <,string-n>)*/
+
+/*Function: CALL CATT */
+/*Purpose: To concatenate two or more strings, removing only trailing blanks before the concatenation */
+/*         takes place.*/
+/*Syntax: CALL CATT(result, string-1 <,string-n>)*/
+
+/*Function: CALL CATX*/
+/*Purpose: To concatenate two or more strings, removing both leading and trailing blanks before the */
+/*         concatenation takes place, and place a single space, or one or more characters of your */
+/*         choice, between each of the strings.*/
+/*Syntax: CALL CATX(separator, result, string-1 <,string-n>)*/
+/*Program 1.28: Demonstrating the three concatenation CALL routines*/
+DATA Call_Cat;
+    String1 = "ABC"; * no spaces;
+    String2 = "DEF   "; * three trailing spaces;
+    String3 = "   GHI"; * three leading spaces;
+    String4 = "   JKL   "; *three leading and trailing spaces;
+    LENGTH Result1 - Result4 $ 20;
+    CALL CATS(Result1, String2, String4); *DEFJKL;
+    CALL CATT(Result2, String2, String1); *DEFABC;
+    CALL CATX(" ", Result3, String1, String3); *ABC GHI;
+    CALL CATX(",", Result4, String3, String4); *GHI,JKL;
+RUN;
+TITLE "Listing of Data Set CALL_CAT";
+PROC PRINT DATA = Call_Cat NOOBS;
+RUN;
+
+/*The "CAT" Functions (CAT, CATS, CATT, CATX, and CATQ)*/
+/*Function: CAT*/
+/*Purpose: To concatenate (join) two or more character strings or numeric values, leaving leading and/or */
+/*         trailing blanks unchanged.*/
+/*Syntax: CAT(item-1, item-2 <,item-n>)*/
+/**/
+/*Function: CATS*/
+/*Purpose: To concatenate (join) two or more character strings or numeric values, stripping both leading and */
+/*         trailing blanks on character values.*/
+/*Syntax: CATS(item-1, item-2 <,item-n>)*/
+/**/
+/*Function: CATT*/
+/*Purpose: To concatenate (join) two or more character strings or numeric values, stripping only trailing */
+/*         blanks on character values.*/
+/*Syntax: CATT(item-1, item-2 <,item-n>)*/
+/**/
+/*Function: CATX*/
+/*Purpose: To concatenate (join) two or more character strings or numeric values, stripping both leading and */
+/*         trailing blanks on character values and inserting one or more separator characters between the strings.*/
+/*Syntax: CATX(separator, item-1, item-2 <,item-n>)*/
+/**/
+/*Function: CATQ*/
+/*Purpose: This function is similar to the CATX function. Unlike CATX, CATQ does not automatically strip */
+/*         leading and trailing blanks unless you use the s modifier. In addition, with the a modifier, you */
+/*         can place quotes around all of the concatenated strings. As with the other "CAT" functions, the */
+/*         arguments can be character or numeric.*/
+/*Syntax: CATQ(modifiers,<delimiter,>,item-1,item-2 <,item-n>)*/
+/*The following modifiers, placed in single or double quotation marks, can be used with CATQ:*/
+/*        a   place quotes around each of the strings to be concatenated.*/
+/*        1   use single quotes.*/
+/*        2   use double quotes.*/
+/*        d   treat the next argument as a delimiter.*/
+/*        s   strip leading and trailing quotes.*/
+/*        m   add delimiters after the first item, even if the item is a missing value.*/
+/*Program 1.29: Demonstrating the five concatenation functions*/
+TITLE "Demonstrating the CAT functions";
+DATA _NULL_;
+    FILE PRINT;
+    String1 = "ABC"; * no spaces;
+    String2 = "DEF   "; * three trailing spaces;
+    String3 = "   GHI"; * three leading spaces;
+    String4 = "   JKL   "; * three leading and trailing spaces;
+    LENGTH Join1 - Join10 $ 20;
+    Join1 = CAT(String2,String3); *DEF   GHI;
+    Join2 = CATS(String2,String4); *DEFJKL;
+    Join3 = CATS(12,34,56); *123456;
+    Join4 = CATT(String2,String1); *DEFABC;
+    Join5 = CATX(" ",String1,String3); *ABC GHI;
+    Join6 = CATX(",",String3,String4); *GHI,JKL;
+    Join7 = CATX("-",908,782,6562); * 908-782-6562;
+    Join8 = CATQ(" ",String1,String3); *ABC    GHI   ;
+    Join9 = CATQ("a",String1,String3); *"ABC""   GHI   ";
+    Join10 = CATQ("as",String1,String3); *"ABC""GHI";
+    S1 = ':' || String1 || ':';
+    S2 = ':' || String2 || ':';
+    S3 = ':' || String3 || ':';
+    S4 = ':' || String4 || ':';
+    PUT /"String 1 " S1/
+         "String 2 " S2/
+         "String 3 " S3/
+         "String 4 " S4/
+        Join1= /
+        Join2= /
+        Join3= /
+        Join4= /
+        Join5= /
+        Join6= /
+        Join7= /
+        Join8= /
+        Join9= /
+        Join10= / ;
+RUN;
