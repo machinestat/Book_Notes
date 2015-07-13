@@ -288,8 +288,7 @@ df$a[df$a < 5] <- 0
 df$a
 ```
 
-Subsetting with nothing can be useful in conjunction with assignment
-because it will preserve the original object class and structure. Compare the following two expressions. In the first, mtcars will remain as a data frame. In the second, mtcars will become a list.
+Subsetting with nothing can be useful in conjunction with assignment because it will preserve the original object class and structure. Compare the following two expressions. In the first, mtcars will remain as a data frame. In the second, mtcars will become a list.
 
 ```{r}
 mtcars[] <- lapply(mtcars, as.integer)
@@ -321,4 +320,139 @@ unname(lookup[x]) # use unname() to remove names in the result
 
 # Or with fewer output values
 c(m = "Known", f = "Known", u = "Unknown")[x]
+```
+
+### 2.4.2 Matching and merging by hand (integer subsetting)
+
+More complicated lookup tables which have multiple columns of information.
+
+```{r}
+grades <- c(1, 2, 2, 3, 1)
+info <- data.frame(
+                    grade = 3:1,
+                    desc = c("Excellent", "Good", "Poor"),
+                    fail = c(F, F, T)
+)
+
+# want to duplicate the info table so that we have a row for each value in grades.
+# using match() and integer subsetting method
+id <- match(grades, info$grade)
+info[id, ]
+
+# use rownames() and character subsetting
+rownames(info) <- info$grade
+info[as.character(grades), ]
+```
+
+### 2.4.3 Random samples/bootstrap (integer subsetting)
+
+`sample()` generates a vector of indices, then subsetting to access the values:
+
+```{r}
+df <- data.frame(x = rep(1:3, each = 2), y = 6:1, z = letters[1:6])
+# Randomly reorder
+df[sample(nrow(df)), ]
+# Select 3 random rows
+df[sample(nrow(df), 3), ]
+# Select 6 bootstrap replicates
+df[sample(nrow(df), 6, rep = T), ]
+```
+
+The arguments of sample() control the number of samples to extract, and whether sampling is performed with or without replacement.
+
+### 2.4.4 Ordering (integer subsetting)
+
+`order()` takes a vector as input and returns an integer vector describing how the subsetted vector should be ordered:
+
+```{r}
+x <- c("b", "c", "a")
+order(x)
+x[order(x)]
+#  supply additional variables to order() to break ties,  change from ascending to descending order using decreasing = TRUE. any missing values will be put at the end of the vector; can remove them with na.last = NA or put at the front with na.last = FALSE.
+
+# Randomly reorder df
+df2 <- df[sample(nrow(df)), 3:1]
+df2
+df2[order(df2$x), ]
+
+# order the columns
+df2[, order(names(df2))]
+```
+
+### 2.4.5 Expanding aggregated counts (integer subsetting)
+
+`rep()` and integer subsetting make it easy to uncollapse the data by subsetting with a repeated row index:
+```{r}
+df <- data.frame(x = c(2, 4, 1), y = c(9, 11, 6), n = c(3, 5, 1))
+rep(1:nrow(df), df$n)
+df[rep(1:nrow(df), df$n), ]
+```
+
+### 2.4.6 Removing columns from data frames (character subsetting)
+
+There are two ways to remove columns from a data frame. 
+
+1. set individual columns to NULL:
+```{r}
+df <- data.frame(x = 1:3, y = 3:1, z = letters[1:3])
+df$z <- NULL
+```
+
+2. subset to return only the columns you want:
+```{r}
+df <- data.frame(x = 1:3, y = 3:1, z = letters[1:3])
+df[c("x", "y")]
+# use set operations to work out which colums to keep:
+df[setdiff(names(df), "z")]
+```
+
+### 2.4.7 Selecting rows based on a condition (logical subsetting)
+
+Logical subsetting, use the vector boolean operators `&` and `|`, not the shortcircuiting scalar operators `&&` and `||`
+
+```{r}
+mtcars[mtcars$gear == 5, ]
+mtcars[mtcars$gear == 5 & mtcars$cyl == 4, ]
+```
+
+### 2.4.8 Boolean algebra vs. sets (logical & integer subsetting)
+
+It’s useful to be aware of the natural equivalence between set operations (integer subsetting) and boolean algebra (logical subsetting). Using set operations is more effective when:
+
+* You want to find the first (or last) `TRUE`
+* You have very few TRUEs and very many FALSEs; a set representation may be faster and require less storage.
+
+`which()` allows you to convert a boolean representation to an integer representation.
+```{r}
+x <- sample(10) < 4
+which(x)
+
+unwhich <- function(x, n) {
+    out <- rep_len(FALSE, n)
+    out[x] <- TRUE
+    out
+}
+unwhich(which(x), 10)
+
+# create two logical vectors and their integer equivalents and then explore the relationship between boolean and set operations.
+(x1 <- 1:10 %% 2 == 0)
+(x2 <- which(x1))
+(y1 <- 1:10 %% 5 == 0)
+(y2 <- which(y1))
+
+# X & Y <-> intersect(x, y)
+x1 & y1
+intersect(x2, y2)
+
+# X | Y <-> union(x, y)
+x1 | y1
+union(x2, y2)
+
+# X & !Y <-> setdiff(x, y)
+x1 & !y1
+setdiff(x2, y2)
+
+# xor(X, Y) <-> setdiff(union(x, y), intersect(x, y))
+xor(x1, y1)
+setdiff(union(x2, y2), intersect(x2, y2))
 ```
