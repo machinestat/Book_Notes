@@ -199,3 +199,156 @@ RUN;
 TITLE "Listing of Data Set PIECES_PARTS";
 PROC PRINT DATA = Pieces_Parts NOOBS;
 RUN;
+
+/*Functions That Work with Date, Datetime, and Time Intervals*/
+/**/
+/*Function: INTCK*/
+/*Purpose: To return the number of intervals between two dates, two times, or two datetime values. */
+/*		 To be more accurate, the INTCK function counts the number of times a boundary has been */
+/*		 crossed going from the first value to the second. */
+/*Syntax: INTCK('interval<Multiple> <.shift>', start-value, end-value)*/
+/**/
+/*Function: INTNX*/
+/*Purpose: To return the date after a specified number of intervals have passed.*/
+/*Syntax: INTNX('interval', start-date, increment <,'alignment'>) */
+/**/
+/*Program 4.8: Demonstrating the INTNX function (with the SAMEDAY alignment)*/
+*A dentist wants to see each of his patients in six months for a followup
+visit. However, if the date in six months falls on a Saturday or Sunday,
+he wants to pick a random day in the following week.; 
+DATA Dental;
+	INPUT Patno : $5. Visit_date : mmddyy10.;
+	FORMAT Visit_date weekdate.;
+DATALINES;
+001 1/14/2009
+002 1/17/2009
+003 1/18/2009
+004 1/19/2009
+005 1/19/2009
+006 1/20/2009
+007 1/11/2009
+008 1/17/2009
+;
+RUN;
+TITLE "Listing of data set DENTAL";
+PROC PRINT DATA = Dental NOOBS;
+RUN;
+DATA Followup;
+	SET Dental;
+	Six_Months = INTNX('month', Visit_date, 6, 'sameday');
+	*Check if weekend;
+ 	DayofWeek = WEEKDAY(Six_Months);
+ 	*Keep track of actual day for testing purposes;
+ 	Actual = Six_Months;
+ 	*If Sunday add random integer between 1 and 5;
+ 	IF DayofWeek = 1 THEN
+ 	Six_Months = Six_Months + CEIL(RANUNI(0)*5);
+ 	*If Saturday, add a random integer between 2 and 6;
+ 	ELSE IF DayofWeek = 7 THEN
+ 	Six_Months = Six_Months + CEIL(RANUNI(0)*5 + 1);
+run;
+TITLE "Six Month Appointment Dates";
+PROC REPORT DATA = Followup NOWD HEADLINE;
+	COLUMNS Patno Visit_date Actual Six_months;
+ 	DEFINE Patno / DISPLAY "Patient Number" WIDTH = 7;
+ 	DEFINE Visit_date / DISPLAY "Initial Date" WIDTH = 15 FORMAT = weekdate.;
+ 	DEFINE Actual / DISPLAY "Actual Day" WIDTH = 15 FORMAT = weekdate.;
+ 	DEFINE Six_Months / DISPLAY "Six Month Appt." WIDTH = 15
+	FORMAT = weekdate.;
+RUN;
+QUIT; 
+
+/*Function: YRDIF*/
+/*Purpose: To return the difference in years between two dates(includes fractional parts of a year). */
+/*Syntax: YRDIF(start-date, end-date, 'basis') */
+/*		basis is an argument that controls how SAS computes the result. The first value is used to specify */
+/*		the number of days in a month; the second value (after the slash) is used to specify the number of */
+/*		days in a year. */
+/*		A value of 'ACT/ACT' (alias 'ACTUAL') uses the actual number of days in a month and the actual number */
+/*		of days in a year (either 365 or 366 days, depending on whether there are leap years involved). */
+/*		'30/360' Uses 30-day months and 360-day years in the calculation.*/
+/*		'ACT/365' Uses the actual number of days between the two dates, but uses 365-day years, even if a */
+/*				  leap year is in the interval.*/
+/*		'ACT/360' Uses the actual number of days between the two dates, but uses 360-day years.*/
+/*Program 4.9: Program to demonstrate the date interval functions*/
+DATA Period;
+	SET Dates;
+	Interval_Month = INTCK('month', Date1, Date2);
+	Interval_Year = INTCK('year', Date1, Date2);
+	Year_Diff = YRDIF(Date1, Date2, 'actual');
+	Interval_Qtr = INTCK('qtr', Date1, Date2);
+	Next_Month = INTNX('month', Date1, 1);
+	Next_Year = INTNX('year', Date1, 1);
+	Next_Qtr = INTNX('qtr', Date1, 1);
+	Six_Month = INTNX('month', Date1, 6);
+	
+	FORMAT Next: Six_Month date9.;
+RUN;
+TITLE "Listing of Data Set PERIOD";
+PROC PRINT DATA = Period HEADING = H;
+	ID Date1 Date2;
+RUN;
+
+/*Function That Computes Dates of Standard Holidays*/
+/*Function: HOLIDAY*/
+/*Purpose: Returns a SAS date, given a holiday name and a year.*/
+/*Syntax: HOLIDAY (holiday, year)*/
+/*Program 4.10: Demonstrating the HOLIDAY function*/
+DATA Salary;
+	H1 = HOLIDAY('Newyear', 2005);
+	IF WEEKDAY(H1) = 7 THEN H1 = H1 + 2;
+ 	ELSE IF WEEKDAY(H1) = 1 THEN H1 = H1 + 1;
+ 	H2 = HOLIDAY('MLK',2005);
+ 	H3 = HOLIDAY('USpresidents',2005);
+ 	H4 = HOLIDAY('Easter',2005)-2;
+ 	array H[4];
+ 	First = '01Jan2005'd; *Saturday;
+ 	Second = '31Mar2005'd; *Thursday;
+ 	Work = intck('weekday',First,Second);
+ 	/* if holiday falls between the First and Second date,
+ 	decrement number of working days */
+ 	DO i = 1 TO 4;
+ 		IF First LE H[i] LE Second THEN Work = Work - 1;
+ 	END;
+ 	Salary = 500 * Work;
+ 	FORMAT First Second mmddyy10. Salary dollar10.;
+ 	KEEP First Second Work Salary;
+RUN;
+TITLE "Listing of SALARY";
+PROC PRINT DATA = SALARY NOOBS;
+RUN; 
+
+/*Functions That Work with Julian Dates */
+/*Function: DATEJUL*/
+/*Purpose: To convert a Julian date into a SAS date.*/
+/*Syntax: DATEJUL(jul-date)*/
+/*		jul-date is a numerical value representing the Julian date in the form dddyy or dddyyyy*/
+/**/
+/*Function: JULDATE*/
+/*Purpose: To convert a SAS date into a Julian date.*/
+/*Syntax: JULDATE(date)*/
+/*		date is a SAS date. */
+/**/
+/*Function: JULDATE7*/
+/*Purpose: To convert a SAS date into seven-digit Julian date.*/
+/*Syntax: JULDATE7(date)*/
+/*		date is a SAS date. */
+/*Program 4.11: Demonstrating the three Julian date functions*/
+***Note: option YEARCUTOFF set to 1920;
+OPTIONS YEARCUTOFF = 1920;
+DATA Julian;
+	INPUT Date : date9. Jdate;
+	Jdate_to_SAS = DATEJUL(Jdate);
+	SAS_to_Jdate = JULDATE(Date);
+	SAS_to_Jdate7 = JULDATE7(Date);
+	FORMAT Date Jdate_to_SAS mmddyy10.;
+DATALINES;
+01JAN1960 2003365
+15MAY1901 1905001
+21OCT1946 5001
+;
+RUN;
+TITLE "Listing of Data Set JULIAN";
+PROC PRINT DATA = Julian NOOBS;
+	VAR Date SAS_to_Jdate SAS_to_Jdate7 Jdate Jdate_to_SAS;
+RUN; 
