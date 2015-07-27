@@ -752,3 +752,88 @@ DATA _NULL_;
         Join9= /
         Join10= / ;
 RUN;
+
+
+/*Functions That Remove Blanks from Strings */
+/*LEFT and RIGHT */
+/*These two functions left- or right-align text. The length of a character variable will not change when */
+/*you use these two functions. */
+/*Function: LEFT */
+/*Purpose: To left-align text values. LEFT doesn't remove the leading blanks; it moves them to the end of the string. */
+/*Syntax: LEFT(character-value)*/
+/*Program 1.30: Left-aligning text values from variables read with the $CHAR informat*/
+DATA Lead_On;
+	INPUT String $char15.;
+	Left_String = LEFT(String);
+DATALINES;
+ABC
+ XYZ
+ Ron Cody
+;
+TITLE "Listing of Data Set LEAD_ON";
+PROC PRINT DATA = Lead_On NOOBS;
+	FORMAT String Left_String $quote.;
+RUN; 
+
+/*Function: RIGHT */
+/*Purpose: To right-align a text string. The RIGHT function will move the characters to the end of the string */
+/*and add the blanks to the beginning so that the final length of the variable remains the same.*/
+/*Syntax: RIGHT(character-value)*/
+/*Program 1.31: Right-aligning text values */
+
+DATA Right_On;
+	INPUT String $char10.;
+	Right_String = RIGHT(String);
+DATALINES;
+ ABC
+ 123 456
+Ron Cody
+;
+RUN;
+TITLE "Listing of Data Set RIGHT_ON";
+PROC PRINT DATA = Right_On NOOBS;
+	FORMAT String Right_String $quote.;
+RUN; 
+
+/*Function: TRIM */
+/*Purpose: To remove trailing blanks from a character value. */
+/*Syntax: TRIM(character-value)*/
+/*Program 1.32: Creating a program to concatenate first, middle, and last names into a single variable*/
+DATA Put_Together;
+	LENGTH Name $ 45;
+	INFORMAT Name1-Name3 $15.;
+	INFILE DATALINES MISSOVER;
+	INPUT Name1-Name3 $15.;
+	Name = TRIM(Name1) || ' ' || TRIM(Name2) || ' ' || Name3;
+	Without = Name1 || Name2 || Name3;
+DATALINES;
+Ronald Cody
+Julia Child
+Henry Ford
+Lee Harvey Oswald
+;
+RUN;
+TITLE "Listing Of Data Set PUT_TOGETHER";
+PROC PRINT DATA = Put_Together NOOBS;
+RUN; 
+
+/*Function: TRIMN*/
+/*Purpose: To remove trailing blanks from a character value. The difference between TRIM and TRIMN is that*/
+/*		 the TRIM function returns a single blank for a blank string, while TRIMN returns a null string */
+/*		 (zero blanks). */
+/*Syntax: TRIMN(character-value)*/
+/*Program 1.33: Demonstrating the difference between the TRIM and TRIMN functions*/
+
+DATA All_the_Trimmings;
+	A = "AAA";
+	B = "BBB";
+	Length_ab = LENGTHC(A || B);
+	Length_ab_trim = LENGTHC(TRIM(A) || TRIM(A));
+	Length_ab_trimn = LENGTHC(TRIM(A) || TRIMN(B));
+	Length_null = LENGTHC(COMPRESS(A, "A") || COMPRESS(B, "B"));
+	Length_null_trim = LENGTHC(TRIM(COMPRESS(A, "A")) || TRIM(COMPRESS(B, "B")));
+	Length_null_trimn = LENGTHC(TRIMN(COMPRESS(A, "A")) || TRIMN(COMPRESS(B, "B")));
+	PUT A = B = /
+	Length_ab = Length_ab_trim = length_ab_trimn = /
+	Length_null = Length_null_trim = Length_null_trimn = ;
+RUN;
