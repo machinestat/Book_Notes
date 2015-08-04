@@ -1,0 +1,481 @@
+---
+title: "Functions"
+
+output: pdf_document
+---
+
+## 6.1 Function components
+
+All R functions have three parts:
+
+*  the `body()`, the code inside the function.
+*  the `formals()`, the list of arguments which controls how you can call the function.
+*  `the environment()`, the “map” of the location of the function’s variables.
+
+These three important components will show up when print a function in R.  If the environment isn’t displayed, it means that the function was created in the global environment.
+
+```{r}
+f <- function(x) x^2
+f
+
+formals(f)
+
+body(f)
+
+environment(f)
+
+```
+
+The assignment forms of body(), formals(), and environment() can also
+be used to modify functions.
+
+Like all objects in R, functions can also possess any number of additional
+`attributes()`. One attribute used by base R is “srcref”, short for source
+reference, which points to the source code used to create the function.
+Unlike `body()`, this contains code comments and other formatting. 
+
+### 6.1.1 Primitive functions
+
+There is one exception to the rule that functions have three components.
+Primitive functions, like `sum()`, call `C` code directly with `.Primitive()` and contain no `R` code. Therefore their `formals()`, `body()`, and
+`environment()` are all NULL:
+
+```{r}
+sum
+
+formals(sum)
+
+body(sum)
+
+environment(sum)
+
+```
+
+Primitive functions are only found in the base package, and since they
+operate at a low level, they can be more efficient (primitive replacement
+functions don’t have to make copies), and can have different rules for
+argument matching (e.g., switch and call). 
+
+### 6.1.2 Exercises
+
+1.  What function allows you to tell if an object is a function? What function allows you to tell if a function is a primitive function?
+
+`is.function` and `is.primitive`
+
+2.  This code makes a list of all functions in the base package.
+
+    objs <- mget(ls("package:base"), inherits = TRUE)  
+    funs <- Filter(is.function, objs)
+    Use it to answer the following questions:
+      a.  Which base function has the most arguments?
+      b.  How many base functions have no arguments? What’s special about those functions?
+      c.  How could you adapt the code to find all primitive functions?
+      
+```{r}
+objs <- mget(ls("package:base"), inherits = TRUE)  
+funs <- Filter(is.function, objs)
+# a. :
+x <- numeric(length(funs))
+for (i in 1: length(funs)){
+    x[i] <- length(formals(funs[[i]]))
+    }
+max(x)
+funs[which(x == max(x))]
+
+# b. :
+length(which(x == 0)) #224
+# These are primitive functions that does not have formals
+
+# c. :
+findPrimitive <- function(){
+    
+    # find all functions in base package
+    objs <- mget(ls("package:base"), inherits = TRUE)  
+    funs <- Filter(is.function, objs)
+    
+    # find length of all functions
+    x <- numeric(length(funs))
+        for (i in 1: length(funs)){
+        x[i] <- length(formals(funs[[i]]))
+    }
+    
+    # find the number of primitive functions
+    n <- length(which(x == 0))
+    
+    # number of all primitive functions
+    num <- which(x == 0)
+    results <- list(0)
+    results <- funs[num]
+    return(results)
+}
+
+```
+
+3.  What are the three important components of a function?
+
+body, formals and environment
+
+4.  When does printing a function not show what environment it
+was created in?
+
+It means that the function was created in the global environment.
+
+## 6.2 Lexical scoping
+
+Scoping is the set of rules that govern how R looks up the value of a symbol.
+
+R has two types of scoping: lexical scoping, implemented automatically at the language level, and dynamic scoping, used in select functions to save typing during interactive analysis.
+
+Lexical scoping looks up symbol values based on how functions were nested when they were created, not how they are nested when they are called.
+
+There are four basic principles behind R’s implementation of lexical scoping:
+
+*  name masking  
+*  functions vs. variables  
+*  a fresh start  
+*  dynamic lookup  
+
+### 6.2.1 Name masking
+
+The following example illustrates the most basic principle of lexical scoping
+
+```{r}
+f <- function(){
+    x <- 1
+    y <- 2
+    c(x, y)
+}
+f()
+rm(f)
+
+# If a name isn’t defined inside a function, R will look one level up
+x <- 2
+g <- function(){
+    y <- 1
+    c(x, y)
+}
+g()
+rm(x, g)
+```
+
+The same rules apply if a function is defined inside another function:  
+look inside the current function, then where that function was defined, and so on, all the way up to the global environment, and then on to other loaded packages.
+
+```{r}
+x <- 1
+h <- function(){
+    y <- 2
+    i <- function(){
+        z <- 3
+        c(x, y, z)
+    }
+    i()
+}
+h()
+rm(x, h)
+```
+
+The same rules apply to closures, functions created by other functions. The following function, `j()`, returns a function. 
+
+```{r}
+j <- function(x){
+    y <- 2
+    function(){
+        c(x, y)
+    }
+}
+k <- j(1)
+k()
+rm(j, k)
+```
+
+### 6.2.2 Functions vs. variables
+
+The same principles apply regardless of the type of associated value — finding functions works exactly the same way as finding variables:
+
+```{r}
+l <- function(x) x + 1
+m <- function(){
+    l <- function(x) x * 2
+    l(10)
+}
+m()
+rm(l, m)
+```
+
+### 6.2.3 A fresh start
+
+What happens to the values in between invocations of a function? What will happen the first time you run this function? What will happen the second time?
+
+```{r}
+j <- function(){
+    if(!exists("a")) {
+        a <- 1
+    } else{
+        a <- a + 1
+    }
+    print(a)
+}
+j()
+rm(j)
+# This is because every time a function is called, a new environment is created to host execution.
+```
+
+### 6.2.4 Dynamic lookup
+
+Lexical scoping determines where to look for values, not when to look for them. R looks for values when the function is run, not when it’s created.
+
+```{r}
+f <- function() x
+x <- 15
+f()
+
+x <- 20
+f()
+#  this means the function is no longer self-contained
+```
+
+One way to detect this problem is the `findGlobals()` function from codetools. This function lists all the external dependencies of a function:
+
+```{r}
+f <- function() x + 1
+codetools::findGlobals(f)
+```
+
+Another way to try and solve the problem would be to manually change the environment of the function to the `emptyenv()`, an environment which contains absolutely nothing:
+
+```{r}
+environment(f) <- emptyenv()
+f()
+```
+
+### 6.2.5 Exercises
+
+1.  What does the following code return? Why? What does each of the three c’s mean?
+
+c <- 10  
+here the c is a scalar  
+
+c(c = c)  
+The first c, c(), is a generic function that combines its arguments to form a vector, the second c is the name of the argument, the third c represent the variable c which equals to 10.
+
+2.  What are the four principles that govern how R looks for values?
+
+The four priciples are:    
+
+* Name masking
+* Function vs. variables
+* a fresh start
+* dynamic lookup
+
+3. What does the following function return? Make a prediction before running the code yourself.
+
+```{r}
+f <- function(x) {
+    f <- function(x) {
+        f <- function(x) {
+            x ^ 2
+            }
+        f(x) + 1
+    }
+    f(x) * 2
+}
+f(10)
+```
+
+### 6.3 Every operation is a function call
+
+The previous example of redefining ( works because every operation in R is a function calle. This includes infix operators like `+`, control flow operators like `for`, `if`, and `while`, subsetting operators like `[]` and `$`, and even the curly brace `{`. This means that each pair of statements in the following example is exactly equivalent.
+
+```{r}
+x <- 10; y <- 5
+x + y
+
+`+`(x, y)
+
+for (i in 1:2) print(i)
+`for`(i, 1:2, print(i))
+
+if (i == 1) print("yes!") else print("no")
+`if` (i == 1, print("yes!"), print("no."))
+
+x[3]
+`[`(x, 3)
+
+# { print(1); print(2); print(3) }
+{print(1); print (2); print(3)}
+`{`(print(1), print(2), print(3))
+```
+
+It’s more often useful to treat special functions as ordinary functions.
+
+```{r}
+add <- function(x, y) x + y
+sapply(1:10, add, 3)
+
+# can also get the same effect using the built-in + function
+sapply(1:10, `+`, 3)
+sapply(1:10, "+", 3)
+
+# combine lapply() or sapply() with subsetting:
+x <- list(1:3, 4:9, 10:12)
+sapply(x, "[", 2)
+
+# equivalent to
+sapply(x, function(x) x[2])
+```
+
+## 6.4 Function arguments
+
+The formal arguments are a property of the function, whereas the actual or calling arguments can vary each time you call the function.
+
+### 6.4.1 Calling functions
+
+Can specify arguments by position, by complete name, or by partial name when calling a function. Arguments are matched first by exact name (perfect matching), then by prefix matching, and finally by position.
+
+```{r}
+f <- function(abcdef, bcde1, bcde2) {
+    list(a = abcdef, b1 = bcde1, b2 = bcde2)
+}
+str(f(1, 2, 3))
+
+str(f(2, 3, abcdef = 1))
+
+# Can abbreviate long argument names:
+str(f(2, 3, a = 1))
+
+# But this doesn't work because abbreviation is ambiguous
+str(f(1, 3, b = 1))
+```
+
+Avoid using positional matching for less commonly used argumentss, and only use readable abbreviations with partial matching. Named arguments should always come after unnamed arguments. 
+
+These are good calls:
+
+mean(1:10)  
+mean(1:10, trim = 0.05)  
+
+These are confusing:
+
+mean(1:10, n = T)  
+mean(1:10, , FALSE)  
+mean(1:10, 0.05)  
+mean(, TRUE, x = c(1:10, NA))  
+
+### 6.4.2 Calling a function given a list of arguments
+
+Suppose a list of function arguments:
+
+```{r}
+args <- list(1:10, na.rm = TRUE)
+
+# How to use functions mean() (do.call)
+do.call(mean, list(1:10, na.rm = TRUE))
+
+# Equivalent to
+mean(1:10, na.rm = TRUE)
+```
+
+### 6.4.3 Default and missing arguments
+
+Function arguments in R can have default values.
+
+```{r}
+f <- function(a = 1, b = 2){
+    c(a, b)
+}
+f()
+
+# the default value can be defined in terms of other arguments:
+g <- function(a = 1, b = a*2) {
+    c(a, b)
+}
+g()
+g(10)
+
+# Default arguments can even be defined in terms of variables created within the function. 
+h <- function(a = 1, b = d) {
+    d <- (a + 1)^2
+    c(a, b)
+}
+h()
+h(10)
+
+# can determine if an argument was supplied or not with the missing() function.
+i <- function(a, b) {
+    c(missing(a), missing(b))
+}
+i()
+i(a = 1)
+i(b = 2)
+i(1, 2)
+```
+
+### 6.4.4 Lazy evaluation
+
+By default, R function arguments are only evaluated if they’re actually used:
+
+```{r}
+f <- function(x) {
+    10
+}
+f(stop("This is an error"))
+
+# use force() to ensure that an argument is evaluated
+f <- function(x) {
+    force(x)
+    10
+} 
+f(stop("This is an error"))
+
+# This is important when creating closures with lapply() or a loop:
+add <- function(x) {
+    function(y) x + y
+}
+adders <- lapply(1:10, add)
+adders[[1]](10)
+adders[[10]](10)
+
+add <- function(x) {
+    force(x)
+    function(y) x + y
+}
+adders2 <- lapply(1:10, add)
+adders2[[1]](10)
+adders2[[10]](10)
+
+# This code is exactly equivalent to
+add <- function(x) {
+    x
+    function(y) x + y
+}
+```
+
+Default arguments are evaluated inside the function.
+
+```{r}
+f <- function(x = ls()) {
+    a <- 1
+    x
+}
+# ls() evaluated inside f:
+f()
+
+# ls() evaluated in global environment:
+ls()
+```
+
+an unevaluated argument is called a promise, or  a thunk. A promise is made up of two parts:
+
+*  The expression which gives rise to the delayed computation. (It can be accessed with `substitute()`. )
+*   The environment where the expression was created and where it should be evaluated
+
+The first time a promise is accessed the expression is evaluated in the environment where it was created. This value is cached, so that subsequent access to the evaluated promise does not recompute the value (but the
+original expression is still associated with the value, so `substitute()` can
+continue to access it).
+
+
+Laziness is useful in if statements — the second statement below will
+be evaluated only if the first is true. If it wasn’t, the statement would
+return an error because NULL > 0 is a logical vector of length 0 and not
+a valid input to if.
