@@ -837,3 +837,8 @@ DATA All_the_Trimmings;
 	Length_ab = Length_ab_trim = length_ab_trimn = /
 	Length_null = Length_null_trim = Length_null_trimn = ;
 RUN;
+
+Function: STRIP 
+Purpose: To strip leading and trailing blanks from character variables or strings. STRIP(CHAR) 
+         is equivalent to TRIMN(LEFT(CHAR)), but more convenient. 
+Syntax: STRIP(character-value)
