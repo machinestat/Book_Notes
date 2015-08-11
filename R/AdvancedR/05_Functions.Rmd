@@ -479,3 +479,86 @@ Laziness is useful in if statements — the second statement below will
 be evaluated only if the first is true. If it wasn’t, the statement would
 return an error because NULL > 0 is a logical vector of length 0 and not
 a valid input to if.
+
+```{r}
+x <- NULL
+if (!is.null(x) && x > 0) {
+    
+}
+
+# implement &&
+`&&` <- function(x, y) {
+    if(!x) return(FALSE)
+    if(!y) return(FALSE)
+    
+    TRUE
+}
+a <- NULL
+!is.null(a) && a > 0
+```
+
+This function would not work without lazy evaluation because both x and y would always be evaluated, testing a > 0 even when a was NULL.
+
+### 6.4.5 ...
+
+This argument will match any arguments not otherwise matched, and can be easily passed on to other functions. One relatively sophisticated user of ... is the base `plot()` function. `plot()` is a generic method with arguments x, y and ... .  ... accepts “other graphical parameters”, which are listed in the help for par().
+
+use `list(...)` to capture ... in a form that is easier to work with.
+
+```{r}
+f <- function(...) {
+    names(list(...))
+}
+
+f(a = 1, b = 2)
+```
+
+When using ..., any misspelled arguments will not raise an error, and any arguments after ... must be fully named.
+
+### 6.4.6 Exercises
+
+1.  Clarify the following list of odd function calls:
+
+```{r}
+x <- sample(replace = TRUE, 20, x = c(1:10, NA))
+# randomly sample 20 elements from numbers 1 to 10 and NA, with replacement.
+
+y <- runif(min = 0, max = 1, 20)
+# simulate 20 numbers between 0 and 1
+
+cor(m = "k", y = y, u = "p", x = x)
+# using pearson and pairwise.complete.obs methods to calculate
+```
+
+2.  What does this function return? Why? Which principle does it illustrate?
+
+```{r}
+f1 <- function(x = {y <- 1; 2}, y = 0) {
+x + y
+}
+f1()
+```
+
+3.  What does this function return? Why? Which principle does it illustrate?
+
+```{r}
+f2 <- function(x = z) {
+z <- 100
+x
+}
+f2()
+```
+
+## 6.5 Special calls
+
+### 6.5.1 Infix functions
+
+Most functions in R are “prefix” operators: the name of the function comes before the arguments. Infix functions are functions that function name comes in between its arguments, like + or -. All user created infix functions must start and end with % and R comes with the following infix functions predefined: %%, %*%, %/%, %in%, %o%, %x%. (The complete list of built-in infix operators that don’t need % is: ::, :::, $, @, ˆ, *, /, +, -, >, >=, <, <=, ==, !=, !, &, &&, |, ||, ~, <-, <<-)
+
+Example, create a new operator that pastes together strings:
+
+```{r}
+`%+%` <- function (a, b) paste(a, b, sep = "")
+"new" %+% " string"
+```
+
