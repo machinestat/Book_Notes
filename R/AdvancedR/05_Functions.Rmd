@@ -562,3 +562,46 @@ Example, create a new operator that pastes together strings:
 "new" %+% " string"
 ```
 
+When creating the function, put the function name in backticks because it’s a special name.
+
+## 6.6 Return values
+
+The last expression evaluated in a function becomes the return value, the result of invoking the function.
+
+```{r}
+f <- function(x){
+    if (x < 10){
+        0
+    } else {
+        10
+    }
+}
+f(5)
+f(15)
+```
+
+Functions can return only a single object but can return a list containing any number of objects. R protects you from one type of side effect: most R objects have copy-onmodify semantics. So modifying a function argument does not change the original value:
+
+```{r}
+f <- function(x) {
+    x$a <- 2
+    x
+}
+x <- list(a = 1)
+f(x)
+x$a
+```
+
+### 6.6.1 On exit
+
+Functions can set up other triggers to occur when the function is finished using `on.exit()`.
+
+```{r}
+in_dir <- function(dir, code) {
+    old <- setwd(dir)
+    on.exit(setwd(old))
+    force(code)
+}
+getwd()
+in_dir("~", getwd())
+```
