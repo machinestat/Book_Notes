@@ -1,0 +1,123 @@
+---
+title: "OOFiledGuide"
+
+output: pdf_document
+---
+
+## 7.1 Base types
+
+Underlying every *R* object is a C structure (or struct) that describes how that object is stored in memory. The structure includes the contents of the object, the information needed for memory management, and, most importantly for this section, a **type**. This is the **base type** of an R object. Base types are not really an object system because only the R core team can create new types. As a result, new base types are added very rarely: the most recent change, in 2011, added two exotic types that you never see in R, but are useful for diagnosing memory problems (NEWSXP and FREESXP). Prior to that, the last type added was a special base type for S4 objects (S4SXP) in 2005.
+
+The names of base types are not used consistently throughout R, and type and the corresponding “is” function may use different names:
+
+```{r}
+# The type of a function is "closure"
+f <- function() {}
+typeof(f)
+is.function(f)
+
+# The type of a primitive function is "builtin"
+typeof(sum)
+is.primitive(sum)
+```
+
+## 7.2 S3
+
+S3 is R’s first and simplest OO system. It is the only OO system used in the base and stats packages, and it’s the most commonly used system in CRAN packages.
+
+## 7.2.1 Recognising objects, generic functions, and methods
+
+There’s no simple way to test if an object is an S3 object in base R. The closest you can come is `is.object(x) & !isS4(x)`, i.e., it’s an object, but not S4. An easier way is to use `pryr::otype()`:
+
+```{r}
+library(pryr)
+df <- data.frame(x = 1:10, y = letters[1:10])
+otype(df) # A data frame is an S3 class
+otype(df$x) # A numeric vector isn't
+otype(df$y) # A factor is
+```
+
+In S3, methods belong to functions, called **generic functions**, or generics for short. S3 methods do not belong to objects or classes.
+
+To determine if a function is an S3 generic, you can inspect its source code for a call to `UseMethod()`: that’s the function that figures out the correct method to call, the process of method dispatch.
+
+```{r}
+mean
+ftype(mean)
+```
+
+Some S3 generics, like [, sum(), and cbind(), don’t call `UseMethod()` because they are implemented in C. Instead, they call the C functions `DispatchGroup()` or `DispatchOrEval()`. Functions that do method dispatch
+in C code are called internal generics and are documented in?"internal generic". `ftype()` knows about these special cases too.
+
+Given a class, the job of an S3 generic is to call the right S3 method.
+S3 methods look like generic.class(). For example, the Date method for the mean() generic is called mean.Date(), and the factor method for print() is called print.factor(). 
+
+This is the reason that most modern style guides discourage the use of . in function names: it makes them look like S3 methods. `pryr::ftype()` can be used to figure out if a function is an S3 method or generic:
+
+```{r}
+ftype(t.data.frame) # data frame method for t()
+ftype(t.test) # generic function for t tests
+
+# all the methods that belong to a generic:  methods()
+methods("mean")
+methods("t.test")
+
+# list all generics that have a method for a given class:
+methods(class = "ts")
+```
+
+## 7.2.2 Defining classes and creating objects
+
+S3 is a simple and ad hoc system; it has no formal definition of a class. To make an object an instance of a class, just take an existing base object and set the class attribute.
+
+```{r}
+# Create and assign class in one step
+foo <- structure(list(), class = "foo")
+
+# Create, then set class
+foo <-  list()
+class(foo) <- "foo"
+
+#  determine the class of any object using class(x)
+# and see if an object inherits from a specific class using 
+# inherits(x, "classname").
+class(foo)
+inherits(foo, "foo")
+```
+
+The class of an S3 object can be a vector, which describes behaviour
+from most to least specific. For example, the class of the `glm()` object is `c("glm", "lm")` indicating that generalised linear models inherit behaviour from linear models.
+
+Most S3 classes provide a constructor function:
+
+```{r}
+foo <- function(x) {
+    if(!is.numeric(x)) stop("x must be numeric")
+    structure(list(x), class = "foo")
+}
+```
+
+## 7.2.3 Creating new methods and generics
+
+To add a new generic, create a function that calls `UseMethod()`. `UseMethod()` takes two arguments: the name of the generic function, and the argument to use for method dispatch.
+
+```{r}
+f <- function(x) UseMethod("f")
+
+# create a regular function with the correct (generic.class) name to add a method
+
+f.a <- function(x) "Class a"
+a <- structure(list(), class = "a")
+class(a)
+f(a)
+
+# Adding a method to an existing generic works in the same way:
+mean.a <- function(x) "a"
+mean(a)
+```
+
+## 7.2.4 Method dispatch
+
+S3 method dispatch is relatively simple. `UseMethod()` creates a vector of function names, like `paste0("generic", ".", c(class(x), "default"))`
+and looks for each in turn. The “default” class makes it possible to set
+up a fall back method for otherwise unknown classes.
