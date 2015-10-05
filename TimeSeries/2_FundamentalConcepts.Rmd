@@ -1,0 +1,44 @@
+---
+title: "FUNDAMENTAL CONCEPTS"
+output: pdf_document
+---
+
+## 2.1 Time Series and Stochastic Processes
+
+The sequence of random variables $\left \{ Y_{t}:t = 0, \pm 1, \pm2, \pm3, \cdots  \right \}$ is called a **stachastic process** and serves as a model for an observed time series. The complete probalistic structure of such a process is determined by the set distributions of all finite collections of the $Y's$, and much of the information in these joint distributions can be described in terms of means, variances, and covariances. If the joint distributions of the Y's are multivariate normal distributions, then the first and second moments completely determine all the join distributions.
+
+## 2.2 Means, Variances, and Covariances
+
+For a stochastic process $\left \{ Y_{t}:t = 0, \pm 1, \pm2, \pm3, \cdots  \right \}$, the **mean function** defined by
+
+$\mu _{t}= E\left ( Y_{t} \right ) \text{for} \ t = 0, \pm1, \pm2, \cdots \text{(2.2.1)}$
+
+$\mu_{t}$ is just the expected value of the process at time t. In general, $\mu_{t}$ can be different at each time point t.
+
+The **autocovariance function**, $\gamma _{t, s}$, is defined as
+
+$\gamma_{t, s} = Cov\left ( Y_{t}, Y_{s} \right ) \text{for} \ t, s = 0, \pm1, \pm2, \cdots \ \text{(2.2.2)}$
+
+where $Cov\left ( Y_{t}, Y_{s} \right ) = E\left [ \left ( Y_{t} - \mu_{t} \right ) \left ( Y_{s} - \mu_{s} \right )\right ] = E\left ( Y_{t}Y_{s} \right ) - \mu_{t}\mu_{s}$
+
+The **autocorrelation function**, $\rho _{t,s}$, is given by
+
+$\rho_{t, s} = Corr\left( Y_{t}, Y_{s} \right) \text{for} \ t, s = 0, \pm1, \pm2, \cdots \ \text{(2.2.3)}$
+
+where
+
+$Corr \left( Y_{t}, Y_{s} \right) = \frac{Cov\left ( Y_{t}, Y_{s} \right )}{\sqrt{Var\left ( Y_{t} \right ) Var\left ( Y_{s} \right )}} = \frac{\gamma _{t, s}}{\sqrt{\gamma _{t, t} \gamma _{s, s}}} \ \ \text{(2.2.4)}$
+
+Both the covariance and correlation are measures of the (linear) dependence between random variables but the unitless correlation is easier to interpret. The following properties follow from known results and definitions:
+
+$$
+\left.\begin{matrix}
+\gamma _{t, t} =Var\left ( Y_{t} \right )   && \rho _{t, t} = 1\\ 
+\gamma _{t, s} =\gamma _{s, t}              && \rho _{t, s} = \rho _{s, t}\\            
+\left | \gamma _{t, s} \leqslant \sqrt{\gamma _{t, t}\gamma _{s, s}} \right | &&\left | \rho _{t, s} \leqslant  1 \right |
+\end{matrix}\right\}
+\ \text{(2.2.5)}
+$$
+
+values of $\rho _{t, s}$ near $\pm 1$ indicate strong (linear) dependence, whereas values near zero indicate weak (linear) dependence. If $\rho _{t, s} = 0$, then $Y_{t}$ and $Y_{s}$ are *uncorrelated*.
+
