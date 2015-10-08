@@ -152,3 +152,47 @@ plot(rwalk, type = 'o', ylab = "Random Walk")
 ```
 
 **A Moving Average**
+
+Suppose $\left \{ Y_{t} \right \}$ is constructed as
+
+$$
+Y_{t} = \frac{e_{t} + e_{t - 1}}{2}  \  \  \  \ \text{(2.2.14)}
+$$
+
+where the $e$'s are assumed to be independent and identically distributed with 0 mean and variance $\sigma_{e}^{2}$. Here  
+$$
+\begin{aligned}
+\mu_{t} &= E\left ( Y_{t} \right ) = E \left( \frac{e_{t} + e_{t - 1}}{2} \right) = \frac{E\left( e_{t}\right) + E\left( e_{t-1} \right)}{2}\\     
+        &= 0
+\end{aligned}
+$$
+
+and
+
+$$
+\begin{aligned}
+Var \left( Y_{t} \right) &= Var \frac{\left( e_{t} + e_{t-1}\right)}{2} = \frac{Var\left( e_{t}\right) + Var\left( e_{t-1}\right)}{4} \\
+                         &= 0.5\sigma_{e}^{2}
+\end{aligned}
+$$ 
+
+Also
+
+$$
+\begin{aligned}
+Cov\left( Y_{t}, Y_{t-1} \right) &= Cov \left \{ \frac{e_{t} + e_{t-1}}{2}, \frac{e_{t-1} + e_{t-2}}{2} \right\} \\
+&= \frac{Cov\left( e_{t}, e_{t-1}\right) + Cov\left( e_{t}, e_{t-2}\right) + Cov\left( e_{t-1}, e_{t-1}\right) + Cov\left( e_{t-1}, e_{t-2} \right)}{4}\\
+&= \frac{e_{t-1}, e_{t-1}}{4} \\
+&= 0.25\sigma_{e}^{2}
+\end{aligned}
+$$
+
+or $\gamma_{t, t-1} = 0.25\sigma_{e}^{2}$  for all $t$  
+Furthermore, 
+
+$$
+\begin{aligned}
+Cov \left( Y_{t}, Y_{t-2}\right) &= Cov \left \{ \frac{e_{t} + e_{t-1}}{2}, \frac{e_{t-2} + e_{t-3}}{2} \right\} \\
+&= 0 \ \ \text{since e's are independent}
+\end{aligned}
+$$
