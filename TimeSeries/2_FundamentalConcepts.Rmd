@@ -196,3 +196,93 @@ Cov \left( Y_{t}, Y_{t-2}\right) &= Cov \left \{ \frac{e_{t} + e_{t-1}}{2}, \fra
 &= 0 \ \ \text{since e's are independent}
 \end{aligned}
 $$
+
+Similarly, $Cov(Y_{t}, Y_{t-k}) = 0$ for $k > 1$, so we may write
+
+$$
+\begin{aligned}
+\gamma = \left\{\begin{matrix}
+0.5\sigma_{e}^{2}  &\text{for}  \left | t - s \right | = 0\\ 
+0.25\sigma_{e}^{2}  &\text{for}  \left | t - s \right | = 1\\ 
+0   &\text{for} \left | t - s \right | > 1
+\end{matrix}\right.
+\end{aligned}
+$$
+
+The autocorrelation is:
+
+$$
+\begin{aligned}
+\rho_{t, s} = \left\{\begin{matrix}
+1 \ &\text{for} \left | t - s \right | = 0\\ 
+0.5 \ &\text{for} \left | t - s \right | = 1\\ 
+0 \ &\text{for} \left | t - s \right | > 1
+\end{matrix}\right. \  \  \text{(2.2.16)}
+\end{aligned}
+$$
+
+since $0.25\sigma_{e}^{2}/0.5\sigma_{e}^{2} = 0.5$.
+
+Values of $Y$ precisely one time unit apart have exactly the same correlation no matter where they occur in time. Furthermore, $\rho_{t, t-k}$ is the same for all values of $t$.
+
+## 2.3 Stationarity
+
+The basic idea of stationarity is that the probability laws that govern the behavior of the process do not change over time. Specifically, a process $\left \{ Y_{t} \right \}$ is said to be **strictly stationary** if the joint distribution of $Y_{t_{1}}, Y_{t_{2}}, \cdots, Y_{t_{n}}$ is the same as the joint distribution of $Y_{t_{1} - k}, Y_{t_{2} - k}, \cdots, Y_{t_{n} - k}$ for all choices of time points $t_{1}, t_{2}, \cdots, t_{n}$ and all choices of time lag $k$.
+
+When $n = 1$ the (univariate) distribution of $Y_{t}$ is the same as that of $Y_{t - k}$ for all $t$ and $k$; so the $Y$'s are (marginally) identically distributed. It then follows that $E(Y_{t}) = E(Y_{t - k})$ for all $t$ and $k$ so that the mean function is constant for all time. Additionally, $Var(Y_{t}) = Var(Y_{t - k})$ for all $t$ and $k$ so that variance is also constant over time.
+
+Setting $n = 2$ in the stationary definition, the bivariate distribution of $Y_{t}$ and $Y_{s}$ must be the same as that of $Y_{t - k}$ and $Y_{s - k}$ from which it follows that $Cov(Y_{t}, Y_{s}) = Cov(Y_{t - k}, Y_{t - s})$ for all $t, s$ and $k$. Putting $k = s$ and then $k = t$, we obtain
+
+$$
+\begin{aligned}
+\gamma _{t, s} &= Cov(Y_{t - s}, Y_{0}) \\
+               &= Cov(Y_{0}, Y_{s - t}) \\
+               &= Cov(Y_{0}, Y_{\left | t - s \right|}) \\
+               &= \gamma _{0, \left | t - s \right |}
+\end{aligned}
+$$
+
+That is, the covariance between $Y_{t}$ and $Y_{s}$ depends on time only through the time difference $\left | t - s \right |$. Thus, for a stationary process
+
+$$
+\gamma_{k} = Cov(Y_{t}, Y_{t - k}) \ \ \text{and } \rho_{k} = Corr(Y_{t}, Y_{t - k}) \ \ \text{(2.3.1)}
+$$
+
+also
+
+$$
+\rho_{k} = \frac{\gamma_{k}}{\gamma_{0}}
+$$
+
+The general properties become
+
+$$
+\begin{aligned}
+\left.\begin{matrix}
+&\gamma _{0} = Var\left ( Y_{t} \right ) \ \ &\rho_{0} = 1\\ 
+&\gamma _{k} = \gamma _{-k} \ \ \ &\rho _{k} = \rho _{-k}\\ 
+&\left | \gamma _{k} \right | \leq \gamma _{k} \ \ \ &\left | \rho  \right | \leq 1
+\end{matrix}\right\}
+\end{aligned}
+$$
+
+If a process is strictly stationary and has finite variance, then the covariance function must depend only on the time lag.
+
+A stochastic process $\left \{ Y_{t} \right \}$ is said to be **weakly** (or **second-order**) **stationary** if
+
+*  The mean function is constant over time
+*  $\gamma _{t, t - k} = \gamma _{0, k}$ for all time $t$ and lag $k$
+
+**White Noise**
+
+**White noise** is defined as a sequence of independent, identically distributed random variables $\left \{ e_{t} \right \}$. Its importance stems from that many useful processes can be constructed from white noise, and $\left \{ e_{t} \right \}$ is strictly stationary;
+
+$$
+\begin{aligned}
+& Pr(e_{t_{1}} \leq x_{1}, e_{t_{2}} \leq x_{2}, \cdots, e_{t{n}} \leq x_{n}) \\
+&= Pr(e_{t_{1}} \leq x_{1})Pr(e_{t_{2}} \leq x_{2}) \cdots Pr(e_{t{n}} \leq x_{n}) \ \ \text{(by independence)} \\
+&= Pr(e_{t_{1} - k} \leq x_{1})Pr(e_{t_{2} - k} \leq x_{2}) \cdots Pr(e_{t{n} - k} \leq x_{n}) \ \ \text{(identical distributions)} \\
+&= Pr(e_{t_{1} - k} \leq x_{1}, e_{t_{2} - k} \leq x_{2}, \cdots, e_{t{n} - k} \leq x_{n}) \ \ \text{(by independence)}
+\end{aligned}
+$$
+
