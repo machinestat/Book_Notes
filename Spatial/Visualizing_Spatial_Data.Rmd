@@ -1,0 +1,81 @@
+---
+title: "Visualising Spatial Data"
+output: pdf_document
+---
+
+## 3.1 The Traditional Plot System
+
+### 3.3.1 Plotting Points, Lines, Polygons, and Grids
+
+```{r}
+# Plotting points
+library(sp)
+data(meuse)
+coordinates(meuse) <- c("x", "y")
+plot(meuse)
+title("Points")
+```
+
+The *SpatialPointsDataFrame* object used is created from a *data.frame* provided with *sp*, and the plot method shows the points with the default symbol.
+
+```{r}
+# Plotting lines
+cc <- coordinates(meuse)
+m.sl <- SpatialLines(list(Lines(list(Line(cc)), "line1")))
+plot(m.sl)
+title("Lines")
+```
+
+A *SpatialLines* object is made by joining up the points in sequence, and *plot* draws the resulting zig-zags.
+
+```{r}
+data(meuse.riv)
+meuse.lst <- list(Polygons(list(Polygon(meuse.riv)),
+                           "meuse.riv"))
+meuse.pol <- SpatialPolygons(meuse.lst)
+plot(meuse.pol, col = "grey")
+title("polygons")
+```
+
+The *SpatialPolygons* object from data provided with *sp* outlining the banks of River Meuse
+
+```{r}
+data(meuse.grid)
+coordinates(meuse.grid) <- c("x", "y")
+meuse.grid <- as(meuse.grid, "SpatialPixels")
+image(meuse.grid, col = "grey")
+title("grid")
+```
+convert grid data for the same Meuse bank study area into a SpatialPixels object and display it using the image method, with all cells set to "grey".
+
+Combine several elements by using the add = TRUE argument in function calls:
+```{r}
+image(meuse.grid, col = "lightgrey")
+plot(meuse.pol, col = "grey", add = TRUE)
+plot(meuse, add = TRUE)
+```
+
+### 3.1.2 Axes and Layout Elements
+
+In the standard plot functions, the Boolean argument axes can be set to control axis plotting, and the function axis can be called to add axes, fine-tuning their appearance.
+```{r}
+layout(matrix(c(1, 2), 1, 2))
+plot(meuse.pol, axes = TRUE)
+plot(meuse.pol, axes = FALSE)
+axis(1, at = c(178000 + 0:2 * 2000), cex.axis = 0.7)
+axis(2, at = c(326000 + 0:3 * 4000), cex.axis = 0.7)
+box()
+```
+Explicitly instruct R not to reserve the necessary space for adding axes and titles later on space by using function par, which is intended to have side effects on the next plot on the current device.
+```{r}
+oldpar = par(no.readonly = TRUE)
+layout(matrix(c(1, 2), 1, 2))
+plot(meuse, axes = TRUE, cex = 0.6)
+plot(meuse.pol, add = TRUE)
+title("Sample locations")
+par(mar = c(0, 0, 0, 0) + 0.1)
+plot(meuse, axes = FALSE, cex = 0.6)
+plot(meuse.pol, add = TRUE)
+box()
+par(oldpar)
+```
