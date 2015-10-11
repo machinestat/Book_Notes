@@ -1,0 +1,8 @@
+---
+title: "Trends"
+output: html_document
+---
+
+In general time series, the mean function is a totally arbitrary function of time. In a stationary time series, the mean function must be constant in time. Frequently, we need to consider mean functions that are relatively simple (but not constant) functions of time.
+
+## 3.1 Deterministic Versus Stochastic Trends
