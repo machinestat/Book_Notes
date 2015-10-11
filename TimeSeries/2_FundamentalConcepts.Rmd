@@ -286,3 +286,76 @@ $$
 \end{aligned}
 $$
 
+as required. Also, $\mu_{t} = E(e_{t})$ is constant and 
+$$
+\begin{aligned}
+\gamma_{k} = \left\{\begin{matrix}
+Var(e_{t}) \ & \text{for} \ \ k = 0\\ 
+0          \  & \text{for} \ \ k \neq 0
+\end{matrix}\right.
+\end{aligned}
+$$
+
+Alternatively, 
+
+$$ 
+\begin{aligned}
+\rho_{k} = \left\{\begin{matrix}
+1 \ & \text{for} \ \ k = 0\\ 
+0 \  & \text{for} \ \ k \neq 0
+\end{matrix}\right.
+\end{aligned}
+$$
+
+The term white noise arises from the fact that a frequency analysis of the model shows that, in analogy with white light, all frequencies enter equally. We usually assume that the white noise process has mean zero and denote $Var(e_{t})$ by $\sigma_{e}^{2}$.
+
+The moving average example, where $Y_{t} = (e_{t} + e_{t - 1})/2$, is another example of a stationary process constructed from white noise. We have for the moving average process that
+
+$$
+\begin{aligned}
+\rho_{k} = \left\{\begin{matrix}
+1  \   & \text{for} \ \ k = 0\\ 
+0.5 \  & \text{for} \ \ \left | k \right | = 1\\
+0   \  & \text{for} \ \ \left | k \right | \geq 2
+\end{matrix}\right.
+\end{aligned}
+$$
+
+Random Cosine Wave
+
+Consider the process defined as follows:
+
+$$
+Y_{t} = \cos \left [ 2\pi \left ( \frac{t}{12} + \Phi  \right ) \right ] \ \ \text{for} \ \ t = 0, \pm 1, \pm2, \cdots
+$$
+
+where $\Phi $ is selected (once) from a uniform distribution on the interval from 0 to 1. A sample from such a process will apear highly deterministic since $Y_{t}$ will repeat itself identically every 12 time units and look like a perfect (discrete time) cosine curve. However, its maximum will not occur at $t = 0$ but will determined by the random phase $\Phi$. The phase $\Phi$ can be interpreted as the fraction of a complete circle completed by time $t = 0$. The statistical properties can be computed as follows:
+
+$$
+\begin{aligned}
+E(Y_{t}) &= E \left \{ \cos \left [ 2\pi \left (  \frac {t}{12} + \Phi \right ) \right ] \right \} \\
+         &= \int_{1}^{0}\cos \left [ 2\pi \left ( \frac{t}{12} + \phi \right ) \right ]d\phi \\
+         &= \frac{1}{2\pi }\sin \left [ 2\pi \left ( \frac{t}{12} + \phi \right ) \right ]  |_{\phi =0}^{1} \\
+         &= \frac{1}{2\pi }\left [ \sin \left ( 2\pi \frac{t}{12} + 2\pi \right ) - \sin \left ( 2\pi \frac{t}{12} \right )\right ]
+\end{aligned} 
+$$
+
+But this is zero since the sines must agree. So $\mu_{t} = 0$ for all $t$.  
+Also, 
+
+$$
+\begin{aligned}
+\gamma _{t, s} &= E\left \{ \cos \left [ 2\pi \left ( \frac{t}{12} + \Phi \right ) \right ] \cos \left [ 2\pi \left ( \frac{s}{12} + \Phi \right ) \right ]\right \} \\
+               &= \int_{0}^{1}\cos \left [ 2\pi \left ( \frac{t}{12} + \phi \right ) \right ]\cos \left [ 2\pi \left ( \frac{s}{12} + \phi \right ) \right ]d\phi \\
+               &= \frac{1}{2}\int_{0}^{1}\left \{ \cos 2\pi \left ( \frac{t-s}{12} \right ) + \cos 2\pi \left ( \frac{t+s}{12} + 2\phi \right ) \right \}d\phi \\
+               &= \frac{1}{2}\cos \left [ 2\pi \left ( \frac{\left | t - s \right |}{12} \right ) \right ]
+\end{aligned} 
+$$
+
+So the process is stationary with autocorrelation function
+
+$$
+\rho_{k} = \cos\left( 2\pi\frac{k}{12} \right) \  \  \text{for} \ \ k = 0, \pm 1, \pm 2, \cdots \ \ \text{(2.3.4)}
+$$
+
+**EXERCISES**
