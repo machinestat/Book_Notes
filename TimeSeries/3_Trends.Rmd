@@ -6,3 +6,36 @@ output: html_document
 In general time series, the mean function is a totally arbitrary function of time. In a stationary time series, the mean function must be constant in time. Frequently, we need to consider mean functions that are relatively simple (but not constant) functions of time.
 
 ## 3.1 Deterministic Versus Stochastic Trends
+
+The random walk process has zero mean for all time therefore different simulation of the same process might well show completely different "trends". Such trends are so called **stochastic trends**. 
+
+The average monthly temperature series shows a cyclical or seasonal trend, but here the reason for the trend is clear. In this case the possible model might be $Y_{t} = \mu_{t} + X_{t}$, where $\mu_{t}$ is a deterministic function that is periodic with period 12; that is $\mu_{t}$, should satisfy 
+$$
+\mu_{t} = \mu_{t} - 12 \ \ \text{for all} \ \ t
+$$
+
+We might assume that $X_{t}$, the unobserved variation around $\mu_{t}$, has zero mean for all $t$ so that indeed $\mu_{t}$ is the mean function for the observed series $Y_{t}$. This is a **deterministic trend**. An implication of the model $Y_{t} = \mu_{t} + X_{t}$ with $E(X_{t}) = 0$ for all $t$ is that the deterministic trend $\mu_{t}$ applies for all time. Thus, if $\mu_{t} = \beta_{0} + \beta_{1}t$, we are assuming the *same* linear time trend applies forever.
+
+## 3.2 Estimation of a Constant Mean
+
+Consider the simple situation where a constant mean function is asummed
+
+$$
+Y_{t} = \mu + X_{t}  \   \text{(3.2.1)}
+$$
+
+where $E(X_{t}) = 0$ for all $t$. We wish to estimate $\mu$ with observed time series $Y_{1}, Y_{2}, \cdots, Y_{n}$. The most common estimate of $\mu$ is the sample mean or average defined as
+$$
+\bar{Y_{t}} = \frac{1}{n} \sum_{t = 1}^{n} Y_{t} \ \ \text{(3.2.2)}
+$$
+
+Under the minimal assumptions of Equation (3.2.1), we see that $E(\bar{Y}) = \mu$; therefore $\bar{Y}$ is an unbiased estimate of $\mu$. 
+
+Suppose that $Y_{t}$ is a stationary time series with autocorrelation function $\rho_{k}$. Then, by Excercise 2.17
+
+$$ 
+\begin{aligned}
+Var\left( \bar{Y} \right) &= \frac{\gamma_{0}}{n}\left[ \sum_{k=-n+1}^{n-1} \left( 1 - \frac{\left | k \right |}{n} \right) \rho_{k} \right] \\
+                          &= \frac{\gamma_{0}}{n} \left[ 1 + 2\sum_{k = 1}^{n - 1} \left( 1 - \frac{k}{n} \right) \rho_{k} \right] \  \ \text{(3.2.3)}
+\end{aligned}
+$$
