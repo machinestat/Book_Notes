@@ -1,6 +1,6 @@
 ---
 title: "Trends"
-output: html_document
+output: pdf_document
 ---
 
 In general time series, the mean function is a totally arbitrary function of time. In a stationary time series, the mean function must be constant in time. Frequently, we need to consider mean functions that are relatively simple (but not constant) functions of time.
@@ -36,6 +36,95 @@ Suppose that $Y_{t}$ is a stationary time series with autocorrelation function $
 $$ 
 \begin{aligned}
 Var\left( \bar{Y} \right) &= \frac{\gamma_{0}}{n}\left[ \sum_{k=-n+1}^{n-1} \left( 1 - \frac{\left | k \right |}{n} \right) \rho_{k} \right] \\
-                          &= \frac{\gamma_{0}}{n} \left[ 1 + 2\sum_{k = 1}^{n - 1} \left( 1 - \frac{k}{n} \right) \rho_{k} \right] \  \ \text{(3.2.3)}
+                          &= \frac{\gamma_{0}}{n} \left[ 1 + 2\sum_{k = 1}^{n - 1} \left( 1 - \frac{k}{n} \right) \rho_{k} \right] 
+\end{aligned}    \  \  \text{(3.2.3)}
+$$
+
+The first factor, $\gamma_{0}/n$, is the process (population) variance divided by the sample size. If the series $\left \{ X_{t} \right \}$ of the equation (3.2.1) is just white noise, then $\rho _{k} = 0$ for $k > 0$ and $Var\left( \bar{Y} \right)$ reduces to simply $\gamma_{0}/n$.
+
+In the (stationary) moving average model $Y_{t} = e_{t} - \frac{1}{2}e_{t -1}$, we find that $\rho_{1} = -0.4$ and $\rho_{k} = 0$ for $k > 1$. we have
+
+$$
+\begin{aligned}
+Var\left( \bar{Y}\right) &= \frac{\gamma_{0}}{n}\left[ 1 + 2\left( 1 - \frac{1}{2} \right)\left( -0.4 \right) \right] \\
+                         &= \frac{\gamma_{0}}{n}\left[ 1 - 0.8\left( \frac{n - 1}{n} \right) \right]
 \end{aligned}
 $$
+
+For values usually occurring in time series, the factor (n - 1)/n will be close to 1, so we have
+
+$$
+Var\left( \bar{Y} \right) \approx 0.2 \frac{\gamma_{0}}{n}
+$$
+
+The negative correlation at lag 1 has improved the estimation of the mean compared with the estimation obtained in the white noise (random sample) situation. Because the series tends to oscillate back and forth across the mean, the sample mean obtained is more precise.
+
+If $\rho_{k} \geq 0 $ for all $k \geq 1$, we see from equation (3.2.3) that $Var\left( \bar{Y} \right)$ will be larger than $\gamma_{0}/n$. Here the positive correlations make estimation of the mean *more* difficult than in the white noise case, and the Equation (3.2.3) must be used to assess the total effects.
+
+For many stationary processes, the autocorrelation function decays quickly enough with increasing lags that 
+
+$$
+\sum_{k = 0}^{\infty}\left | \rho_{k} \right | < \infty \  \  \text{(3.2.4)}
+$$
+
+Under the assumption (3.2.4) and given a large sample size n, the following approximation follows from Equation (3.2.3) 
+
+$$
+Var \left( \bar{Y} \right) = \approx \frac{\gamma_{0}}{n} \left [ \sum_{k = -\infty}^{\infty} \rho_{k} \right]  \  \  \text{for large n}
+$$
+
+To this approximation the variance is inversely proportional to the sample size.
+
+Suppose that $\rho_{k} = \phi^{\left | k \right |}$ for all $k$, where $\phi$ is a number strictly between -1 and 1, summing a geometryic series yields
+
+$$
+Var \left( \bar{Y} \right) \approx \frac{(1 + \phi)}{(1 - \phi)}\frac{\gamma_{0}}{n}
+$$
+
+For a nonstationary process (but with a constant mean), the precision of the sample mean as an estimate of $\mu$ can be strikingly different. Suppose that in Equation (3.2.1) $\left\{X_{t}\right\}$ is a random walk process. Then directly from Equation (2.2.8) we have
+
+$$
+\begin{aligned}
+Var(\bar{Y}) &= \frac{1}{n^{2}}Var \left[ \sum_{i = 1}^{n} Y_{i} \right] \\
+             &= \frac{1}{n^{2}}Var \left[ \sum_{i = 1}^{n} \sum_{j = 1}^{i} e_{j} \right] \\
+             &= \frac{1}{n^{2}} Var(e_{1} + 2e_{2} + 3e_{3} + \cdots + ne_{n}) \\
+             &= \frac{\sigma_{e}^{2}}{n^{2}} \sum_{k = 1}^{n}k^2
+\end{aligned}
+$$
+
+so that
+
+$$
+Var(\bar{Y}) = \sigma_{e}^{2}(2n + 1) \frac{(n + 1)}{6n} \  \  \text{(3.2.7)}
+$$
+
+The estimate of the mean in this case *increases* as the sample size *n* increases, so need to consider other methods for nonstationary series.
+
+## 3.3 Regression Methods
+
+**Linear and Quadratic Trends in Time**
+
+Consider the deterministic time series as
+
+$$
+\mu_{t} = \beta_{0} + \beta_{1}t  \  \  \text{(3.3.1)}
+$$
+
+The classic least squares (or regression) method is to choose as estimates of $\beta_{1}$ and $\beta_{0}$ values that minimize 
+
+$$
+Q(\beta_{0}, \beta_{1}) = \sum_{t = 1}^{n} \left[ Y_{t} - (\beta_{0} + \beta_{1} t) \right]^{2}
+$$
+
+and
+
+$$
+\begin{aligned}
+\hat{\beta_{1}} &= \frac{\sum_{t = 1}^{n}(Y_{t} - \bar{Y})(t - \bar{t})}{\sum_{t = 1}^{n}(t - \bar{t})^2} \\
+\hat{\beta_{0}} &= \bar{Y} - \hat{\beta_{1}}\bar{t}
+\end{aligned}
+$$
+
+where $\bar{t} = (n + 1)/2$ is the average of $1, 2, \cdots, n$. 
+
+**Example**
