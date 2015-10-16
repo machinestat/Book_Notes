@@ -120,7 +120,7 @@ and
 
 $$
 \begin{aligned}
-\hat{\beta_{1}} &= \frac{\sum_{t = 1}^{n}(Y_{t} - \bar{Y})(t - \bar{t})}{\sum_{t = 1}^{n}(t - \bar{t})^2} \\
+\hat{\beta_{1}} &= \frac{\sum_{t = 1}^{n}(Y_{t} - \bar{Y})(t - \bar{t})}{\sum_{t = 1}^{n}(t - \bar{t})^2} \  \  \text{(3.3.2)}\\
 \hat{\beta_{0}} &= \bar{Y} - \hat{\beta_{1}}\bar{t}
 \end{aligned}
 $$
@@ -128,3 +128,37 @@ $$
 where $\bar{t} = (n + 1)/2$ is the average of $1, 2, \cdots, n$. 
 
 **Example**
+
+Suppose we (mistakenly) treat random walk as a linear trend and estimate the slope and intercept by least-squares regression.
+
+```{r}
+library(TSA)
+data(rwalk)
+model1 <- lm(rwalk ~ time(rwalk))
+summary(model1)
+plot(rwalk, type = 'o', ylab = 'y')
+abline(model1)
+```
+
+**Cyclical or Seasonal Trends**
+
+Consider modeling and estimating seasonal trends such as average monthly temperature data. Here the observed series can be represented as
+
+$$
+Y_{t} = \mu_{t} + X_{t}
+$$
+
+where $E(X_{t}) = 0$ for all $t$.
+
+The assumption for $\mu_{t}$ with monthly seasonal data is that there are 12 constants (parameters), $\beta_{1}, \beta_{2}, \cdots, \beta_{12}$. To fit such a model, we need to set up indicator variables that indicate the month to which each of the data points pertains. We also need to note that the model does not contain an intercept term. Alternatively, we could use an intercept term and leave out any one of the $\beta$'s.
+
+```{r}
+data(tempdub)
+month. <- season(tempdub) # period added to improve table display
+model2 <- lm(tempdub ~ month. - 1) # -1 removes the intercept term
+summary(model2)
+model3 <- lm(tempdub ~ month.) # January is dropped automatically 
+summary(model3)
+```
+
+**Cosine Trends**
