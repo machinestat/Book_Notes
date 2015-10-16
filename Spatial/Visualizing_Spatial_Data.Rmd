@@ -79,3 +79,33 @@ plot(meuse.pol, add = TRUE)
 box()
 par(oldpar)
 ```
+Modifying the margins by setting *mar* in the *par* command to further optimises space usage when axes are drawn, leaving little space for a title. 
+
+```{r}
+plot(meuse)
+plot(meuse.pol, add = TRUE)
+plot(meuse)
+SpatialPolygonsRescale(layout.scale.bar(), offset = locator(1),
+      scale = 1000, fill = c("transparent", "black"), plot.grid = FALSE)
+text(locator(1), "0")
+text(locator(1), "1 km")
+SpatialPolygonsRescale(layout.north.arrow(), offset = locator(1),
+                       scale =400, plot.grid = FALSE)
+```
+
+**Plot Size, Plotting Area, Map Scale, and Multiple Plots**
+
+R distinguishes between figure region, which is the size of the total figure including axes, title etc, and plotting region, which is the area where the actual data are plotted. To control the total size of the figure, we can get and set the figure size in iches:
+```{r}
+par("pin")
+par(pin = c(4, 4))
+
+## close the current plotting area and re-open it specifying size
+dev.off()
+windows(width = 10, height = 10) # use X11 on linux
+
+# write graphic output to files
+pdf("file.pdf", width = 5, height = 7)
+```
+
+The 
